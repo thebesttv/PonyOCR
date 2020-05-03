@@ -1,16 +1,11 @@
 <RCC>
-    <qresource prefix="/img">
-        <file>baidu.png</file>
-        <file>sogou.png</file>
-        <file>tesseract.png</file>
-        <file>PonyOCR.png</file>
-        <file>icon.ico</file>
-    </qresource>
     <qresource prefix="/">
         <file>index-katex.html</file>
         <file>markdown.css</file>
         <file>marked.min.js</file>
         <file>index-mathjax.html</file>
         <file>README.md</file>
+        <file>img/icon.ico</file>
+        <file>img/PonyOCR.png</file>
     </qresource>
 </RCC>
