@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QColor>
+#include <QNetworkProxy>
 
 enum OCRPlatform {
     Baidu,
@@ -48,6 +49,19 @@ public:
     OCRPlatform defaultPlatform(OCRMode mode);
     void setDefaultPlatform(OCRMode mode, OCRPlatform platform);
 
+    using ProxyType = QNetworkProxy::ProxyType;
+    ProxyType proxyType();
+    void setProxyType(ProxyType proxyType);
+
+    QString proxyHost(ProxyType proxy);
+    void setProxyHost(ProxyType proxy, const QString &hostname);
+
+    int proxyPort(ProxyType proxy);
+    void setProxyPort(ProxyType proxy, int port);
+
+    bool useProxy(OCRPlatform platform);
+    void setUseProxy(OCRPlatform platform, bool checked);
+
     // platform is considered available if key1 is not empty
     bool platformAvailable(OCRPlatform platform);
 //    void setPlatformAvailability(OCRPlatform platform, bool checked);
@@ -66,6 +80,7 @@ public:
     // for settings
     static QString fromPlatform(OCRPlatform platform, const QString &value = "");
     static QString fromMode(OCRMode mode, const QString &value = "");
+    static QString fromProxyType(ProxyType proxy, const QString &value = "");
 
     // for display
     static QString asPlatformName(OCRPlatform platform);

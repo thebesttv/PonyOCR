@@ -4,8 +4,12 @@
 #include <QPixmap>
 #include <QDebug>
 
-APIBase::APIBase(OCRPlatform platform, QNetworkAccessManager *manager, QObject *parent)
-    : NetworkBase(manager, parent) , m_platform(platform)
+APIBase::APIBase(OCRPlatform platform,
+                 QNetworkAccessManager *normalManager,
+                 QNetworkAccessManager *proxiedManager,
+                 QObject *parent)
+    : NetworkBase(normalManager, proxiedManager, parent)
+    , m_platform(platform)
 {
 
 }

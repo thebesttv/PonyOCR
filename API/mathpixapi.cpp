@@ -9,12 +9,12 @@
 #include <QJsonObject>
 #include <QRegularExpression>
 
-#include <QFile>
-
 namespace mathpix {
 
-MathpixAPI::MathpixAPI(QNetworkAccessManager *manager, QObject *parent)
-    : APIBase(OCRPlatform::Mathpix, manager, parent)
+MathpixAPI::MathpixAPI(QNetworkAccessManager *normalManager,
+                       QNetworkAccessManager *proxiedManager,
+                       QObject *parent)
+    : APIBase(OCRPlatform::Mathpix, normalManager, proxiedManager, parent)
 {
 
 }
@@ -32,7 +32,10 @@ void MathpixAPI::processFormula()
     setHeader(request);
 
     m_base64str = "{ \"src\": \"data:image/jpeg;base64," + m_base64str + "\" }";
-    m_reply = m_manager->post(request, m_base64str.toUtf8());
+    if(m_handler.useProxy(OCRPlatform::Mathpix))
+        m_reply = m_proxiedManager->post(request, m_base64str.toUtf8());
+    else
+        m_reply = m_normalManager->post(request, m_base64str.toUtf8());
 
     connectReply(m_reply);
 }

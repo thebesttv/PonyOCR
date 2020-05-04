@@ -8,12 +8,15 @@ class QDialogButtonBox;
 class QTabWidget;
 class APIConfigWidget;
 class GeneralConfigWidget;
+class ProxyConfigWidget;
+class QNetworkAccessManager;
 
 class ConfigDialog : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ConfigDialog(QWidget *parent = nullptr);
+    explicit ConfigDialog(QNetworkAccessManager *proxiedManager,
+                          QWidget *parent = nullptr);
 
 private:
     QTabWidget *m_tab;
@@ -22,6 +25,7 @@ private:
                     *m_tencentWidget,
                     *m_ocrspaceWidget,
                     *m_mathpixWidget;
+    ProxyConfigWidget *m_proxyWidget;
     QDialogButtonBox *m_buttonBox;
     ConfigHandler m_handler;
 

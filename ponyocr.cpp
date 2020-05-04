@@ -2,6 +2,7 @@
 #include "Configuation/configdialog.h"
 #include "Capture/capturewidget.h"
 #include <QNetworkAccessManager>
+#include <QNetworkProxy>
 #include <QAction>
 #include <QPlainTextEdit>
 #include <QFont>
@@ -16,13 +17,22 @@
 
 PonyOCR::PonyOCR(QWidget *parent)
     : QMainWindow(parent)
-    , m_manager(new QNetworkAccessManager)
-    , m_api(m_manager, this)
+    , m_normalManager(new QNetworkAccessManager)
+    , m_proxiedManager(new QNetworkAccessManager)
+    , m_api(m_normalManager, m_proxiedManager, this)
 {
     setWindowTitle(tr("PonyOCR"));
 
     initAction();
     initToolBar();
+
+    QNetworkProxy proxy;
+    proxy.setType(m_handler.proxyType());
+    if(proxy.type() != QNetworkProxy::NoProxy) {
+        proxy.setHostName(m_handler.proxyHost(proxy.type()));
+        proxy.setPort(m_handler.proxyPort(proxy.type()));
+    }
+    m_proxiedManager->setProxy(proxy);
 
     connect(&m_api, &GeneralAPI::OCRSuccessful,
             this, &PonyOCR::onOCRSuccessful);
@@ -84,8 +94,7 @@ void PonyOCR::initAction()
 
     m_configAction = new QAction(tr("Settings"), this);
     connect(m_configAction, &QAction::triggered, [this] () {
-//        ConfigDialog *dialog = new ConfigDialog(this);
-        ConfigDialog *dialog = new ConfigDialog(nullptr);   // TODO: DEBUG
+        ConfigDialog *dialog = new ConfigDialog(m_proxiedManager, nullptr);   // TODO: DEBUG
         dialog->show();
     });
 }

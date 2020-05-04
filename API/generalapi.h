@@ -14,7 +14,9 @@ class GeneralAPI : public QObject
 {
     Q_OBJECT
 public:
-    explicit GeneralAPI(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    explicit GeneralAPI(QNetworkAccessManager *normalManager,
+                        QNetworkAccessManager *proxiedManager,
+                        QObject *parent = nullptr);
     void process(const OCRRequest &req);
     baidu::BaiduAPI &baidu();
     tencent::TencentAPI &tencent();

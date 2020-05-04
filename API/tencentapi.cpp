@@ -17,8 +17,10 @@ extern QMap<int, QString> tencent::ErrorCodeMap;
 
 namespace tencent {
 
-TencentAPI::TencentAPI(QNetworkAccessManager *manager, QObject *parent)
-    : APIBase(OCRPlatform::Tencent, manager, parent)
+TencentAPI::TencentAPI(QNetworkAccessManager *normalManager,
+                       QNetworkAccessManager *proxiedManager,
+                       QObject *parent)
+    : APIBase(OCRPlatform::Tencent, normalManager, proxiedManager, parent)
 {
 
 }
@@ -66,8 +68,12 @@ void TencentAPI::processBase(QString url)
     query.addQueryItem("time_stamp", QString::number(now));
     query.addQueryItem("sign", getSigniture(query.toString(QUrl::FullyEncoded)));
 
-    m_reply = m_manager->post(request,
-                              query.toString(QUrl::FullyEncoded).toUtf8());
+    if(m_handler.useProxy(OCRPlatform::Tencent))
+        m_reply = m_proxiedManager->post(request,
+                                        query.toString(QUrl::FullyEncoded).toUtf8());
+    else
+        m_reply = m_normalManager->post(request,
+                                        query.toString(QUrl::FullyEncoded).toUtf8());
     connectReply(m_reply);
 }
 

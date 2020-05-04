@@ -21,7 +21,8 @@ public:
 
 private:
     ConfigHandler m_handler;
-    QNetworkAccessManager *m_manager;
+    QNetworkAccessManager *m_normalManager;
+    QNetworkAccessManager *m_proxiedManager;
     GeneralAPI m_api;
 
     QAction *m_OCRAction;

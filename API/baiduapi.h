@@ -12,7 +12,9 @@ namespace baidu {
 class BaiduAPI : public APIBase {
     Q_OBJECT
 public:
-    BaiduAPI(QNetworkAccessManager *m_manager, QObject *parent = nullptr);
+    explicit BaiduAPI(QNetworkAccessManager *normalManager,
+                      QNetworkAccessManager *proxiedManager,
+                      QObject *parent = nullptr);
 
 private:
     BaiduAccessToken m_tokenGetter;

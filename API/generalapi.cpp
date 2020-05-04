@@ -2,12 +2,14 @@
 
 #include <QtDebug>
 
-GeneralAPI::GeneralAPI(QNetworkAccessManager *manager, QObject *parent)
+GeneralAPI::GeneralAPI(QNetworkAccessManager *normalManager,
+                       QNetworkAccessManager *proxiedManager,
+                       QObject *parent)
     : QObject(parent)
-    , baiduAPI(manager, this)
-    , tencentAPI(manager, this)
-    , ocrspaceAPI(manager, this)
-    , mathpixAPI(manager, this)
+    , baiduAPI(normalManager, proxiedManager, this)
+    , tencentAPI(normalManager, proxiedManager, this)
+    , ocrspaceAPI(normalManager, proxiedManager, this)
+    , mathpixAPI(normalManager, proxiedManager, this)
 {
     connect(&baiduAPI, &baidu::BaiduAPI::OCRSuccessful,
             this, &GeneralAPI::OCRSuccessful);

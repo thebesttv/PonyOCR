@@ -9,7 +9,9 @@ class MathpixAPI : public APIBase
 {
     Q_OBJECT
 public:
-    explicit MathpixAPI(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    explicit MathpixAPI(QNetworkAccessManager *normalManager,
+                        QNetworkAccessManager *proxiedManager,
+                        QObject *parent = nullptr);
 
 private:
     void setHeader(QNetworkRequest &request) override;

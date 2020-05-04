@@ -70,6 +70,48 @@ void ConfigHandler::setDefaultPlatform(OCRMode mode, OCRPlatform platform)
     settings.setValue(fromMode(mode, "default"), static_cast<int>(platform));
 }
 
+QNetworkProxy::ProxyType ConfigHandler::proxyType()
+{
+    using PT = QNetworkProxy::ProxyType;
+    return static_cast<PT>(settings.value("proxy/type",
+                                          PT::NoProxy).toInt());
+}
+
+void ConfigHandler::setProxyType(QNetworkProxy::ProxyType proxy)
+{
+    settings.setValue("proxy/type", static_cast<int>(proxy));
+}
+
+QString ConfigHandler::proxyHost(ConfigHandler::ProxyType proxy)
+{
+    return settings.value("proxy/" + fromProxyType(proxy, "host")).toString();
+}
+
+void ConfigHandler::setProxyHost(ConfigHandler::ProxyType proxy, const QString &hostname)
+{
+    settings.setValue("proxy/" + fromProxyType(proxy, "host"), hostname);
+}
+
+int ConfigHandler::proxyPort(ConfigHandler::ProxyType proxy)
+{
+    return settings.value("proxy/" + fromProxyType(proxy, "port")).toInt();
+}
+
+void ConfigHandler::setProxyPort(ConfigHandler::ProxyType proxy, int port)
+{
+    settings.setValue("proxy/" + fromProxyType(proxy, "port"), port);
+}
+
+bool ConfigHandler::useProxy(OCRPlatform platform)
+{
+    return settings.value(fromPlatform(platform, "useproxy"), false).toBool();
+}
+
+void ConfigHandler::setUseProxy(OCRPlatform platform, bool checked)
+{
+    settings.setValue(fromPlatform(platform, "useproxy"), checked);
+}
+
 bool ConfigHandler::platformAvailable(OCRPlatform platform)
 {
 //    return settings.value(fromPlatform(platform, "ava"), false).toBool();
@@ -156,6 +198,23 @@ QString ConfigHandler::fromMode(OCRMode mode, const QString &value)
         res = "number"; break;
     default:
         res = "badmode"; break;
+    }
+
+    if(!value.isEmpty())
+        res += "/" + value;
+    return res;
+}
+
+QString ConfigHandler::fromProxyType(ConfigHandler::ProxyType proxy, const QString &value)
+{
+    QString res;
+    switch (proxy) {
+    case ProxyType::Socks5Proxy:
+        res = "socks5"; break;
+    case ProxyType::HttpProxy:
+        res = "http"; break;
+    default:
+        return "";
     }
 
     if(!value.isEmpty())

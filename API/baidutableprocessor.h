@@ -11,10 +11,13 @@ namespace baidu {
 class BaiduTableProcessor : public NetworkBase {
     Q_OBJECT
 public:
-    BaiduTableProcessor(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    explicit BaiduTableProcessor(QNetworkAccessManager *normalManager,
+                        QNetworkAccessManager *proxiedManager,
+                        QObject *parent = nullptr);
     void process(const QString &base64str, const QUrl &requestUrl, const QUrl &replyUrl);
 
 private:
+    ConfigHandler m_handler;
     QString m_base64str;
     QUrl m_requestUrl, m_replyUrl;
     QString m_requestID;

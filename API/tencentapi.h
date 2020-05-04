@@ -9,7 +9,9 @@ class TencentAPI : public APIBase
 {
     Q_OBJECT
 public:
-    TencentAPI(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    TencentAPI(QNetworkAccessManager *normalManager,
+               QNetworkAccessManager *proxiedManager,
+               QObject *parent = nullptr);
     void process(const OCRRequest &req) override;
 
 private:

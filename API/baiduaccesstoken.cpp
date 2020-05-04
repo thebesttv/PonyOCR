@@ -11,8 +11,10 @@
 
 namespace baidu {
 
-BaiduAccessToken::BaiduAccessToken(QNetworkAccessManager *manager, QObject *parent)
-    : NetworkBase(manager, parent) , m_expiredTime(-1)
+BaiduAccessToken::BaiduAccessToken(QNetworkAccessManager *normalManager,
+                                   QNetworkAccessManager *proxiedManager,
+                                   QObject *parent)
+    : NetworkBase(normalManager, proxiedManager, parent), m_expiredTime(-1)
 {
 
 }
@@ -40,7 +42,10 @@ QString BaiduAccessToken::getAccessToken()
     url.setQuery(query);
 
     m_array.clear();
-    m_reply = m_manager->get(QNetworkRequest(url));
+    if(m_handler.useProxy(OCRPlatform::Baidu))
+        m_reply = m_proxiedManager->get(QNetworkRequest(url));
+    else
+        m_reply = m_normalManager->get(QNetworkRequest(url));
     QEventLoop loop;
     connect(m_reply, &QNetworkReply::readyRead,
             this, &BaiduAccessToken::readyRead);

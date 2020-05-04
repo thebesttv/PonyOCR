@@ -11,8 +11,10 @@
 
 namespace baidu {
 
-BaiduTableProcessor::BaiduTableProcessor(QNetworkAccessManager *manager, QObject *parent)
-    : NetworkBase(manager, parent)
+BaiduTableProcessor::BaiduTableProcessor(QNetworkAccessManager *normalManager,
+                                         QNetworkAccessManager *proxiedManager,
+                                         QObject *parent)
+    : NetworkBase(normalManager, proxiedManager, parent)
 {
 
 }
@@ -35,7 +37,10 @@ void BaiduTableProcessor::tableRequest()
     // 默认异步
     QUrlQuery query;
     query.addQueryItem("image", QUrl::toPercentEncoding(m_base64str));
-    m_reply = m_manager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    if(m_handler.useProxy(OCRPlatform::Baidu))
+        m_reply = m_proxiedManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    else
+        m_reply = m_normalManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
     connectReply(m_reply);
 }
 
@@ -49,7 +54,10 @@ void BaiduTableProcessor::tableReply()
     QUrlQuery query;
     query.addQueryItem("request_id", m_requestID);
     query.addQueryItem("result_type", "json");
-    m_reply = m_manager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    if(m_handler.useProxy(OCRPlatform::Baidu))
+        m_reply = m_proxiedManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    else
+        m_reply = m_normalManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
     connectReply(m_reply);
 }
 

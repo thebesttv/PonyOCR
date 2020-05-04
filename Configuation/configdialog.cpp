@@ -1,12 +1,13 @@
 #include "configdialog.h"
 #include "apiconfigwidget.h"
 #include "generalconfigwidget.h"
+#include "proxyconfigwidget.h"
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
-ConfigDialog::ConfigDialog(QWidget *parent)
+ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -14,15 +15,19 @@ ConfigDialog::ConfigDialog(QWidget *parent)
 
     m_tab = new QTabWidget;
 
-    // 1. init generalWidget
+    // 1. init generalWidget, proxyWidget
     // 2. configure all api widgets
     // 3. add api widget to general widget
     m_generalWidget = new GeneralConfigWidget;
     m_tab->addTab(m_generalWidget, tr("General"));
+    m_proxyWidget = new ProxyConfigWidget(proxiedManager, this);
+    m_tab->addTab(m_proxyWidget, tr("Internet"));
+
     createBaiduWidget();
     createTencentWidget();
     createOCRSpaceWidget();
     createMathpixWidget();
+
 
     createButtonBox();
 
@@ -106,6 +111,8 @@ void ConfigDialog::saveConfig()
     m_mathpixWidget->saveConfig();
 
     m_generalWidget->saveConfig();
+    m_proxyWidget->saveConfig();
+
     hide();
 }
 

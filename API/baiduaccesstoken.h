@@ -8,7 +8,9 @@ namespace baidu {
 class BaiduAccessToken : public NetworkBase {
     Q_OBJECT
 public:
-    explicit BaiduAccessToken(QNetworkAccessManager *m_manager, QObject *parent = nullptr);
+    explicit BaiduAccessToken(QNetworkAccessManager *normalManager,
+                              QNetworkAccessManager *proxiedManager,
+                              QObject *parent = nullptr);
     QString getAccessToken();
 
 private:

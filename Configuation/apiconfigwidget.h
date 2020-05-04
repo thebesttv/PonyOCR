@@ -28,21 +28,20 @@ public:
 
 private:
     OCRPlatform m_platform;
+    ConfigHandler m_handler;
 
     QLineEdit *m_lineEdit1,
               *m_lineEdit2;
     QLabel *m_label1,
            *m_label2;
 
-//    QMap<OCRMode, QCheckBox*> m_checkBoxes;
     QVector<QCheckBox*> m_checkBoxes;
     int m_boxCnt;
     QGridLayout *m_grid;
 
+    QCheckBox *m_proxyCheckBox;
+
     QLabel *m_descriptionLabel;
-
-    ConfigHandler handler;
-
 };
 
 

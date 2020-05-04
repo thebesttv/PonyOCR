@@ -11,11 +11,14 @@ class QNetworkReply;
 class NetworkBase : public QObject {
     Q_OBJECT
 public:
-    explicit NetworkBase(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    explicit NetworkBase(QNetworkAccessManager *normalManager,
+                         QNetworkAccessManager *proxiedManager,
+                         QObject *parent = nullptr);
 
 protected:
     ConfigHandler m_handler;
-    QNetworkAccessManager *m_manager;
+    QNetworkAccessManager *m_normalManager;
+    QNetworkAccessManager *m_proxiedManager;
     QNetworkReply *m_reply;
     QByteArray m_array;
 

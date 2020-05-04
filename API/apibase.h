@@ -8,7 +8,9 @@ class APIBase : public NetworkBase
 {
     Q_OBJECT
 public:
-    explicit APIBase(OCRPlatform platform, QNetworkAccessManager *manager,
+    explicit APIBase(OCRPlatform platform,
+                     QNetworkAccessManager *normalManager,
+                     QNetworkAccessManager *proxiedManager,
                      QObject *parent = nullptr);
     virtual void process(const OCRRequest &request);
 

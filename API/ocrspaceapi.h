@@ -9,7 +9,9 @@ class OCRSpaceAPI : public APIBase
 {
     Q_OBJECT
 public:
-    explicit OCRSpaceAPI(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    explicit OCRSpaceAPI(QNetworkAccessManager *normalManager,
+                         QNetworkAccessManager *proxiedManager,
+                         QObject *parent = nullptr);
 
 private:
     void setHeader(QNetworkRequest &request) override;

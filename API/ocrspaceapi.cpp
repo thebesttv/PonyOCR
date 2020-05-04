@@ -13,8 +13,10 @@ extern QMap<int, QString> ocrspace::ErrorCodeMap;
 
 namespace ocrspace {
 
-OCRSpaceAPI::OCRSpaceAPI(QNetworkAccessManager *manager, QObject *parent)
-    : APIBase(OCRPlatform::OCR_Space, manager, parent)
+OCRSpaceAPI::OCRSpaceAPI(QNetworkAccessManager *normalManager,
+                         QNetworkAccessManager *proxiedManager,
+                         QObject *parent)
+    : APIBase(OCRPlatform::OCR_Space, normalManager, proxiedManager, parent)
 {
 
 }
@@ -37,7 +39,10 @@ void OCRSpaceAPI::processNoamrlText()
     query.addQueryItem("language", "chs");
     query.addQueryItem("scale", "true");
     query.addQueryItem("OCREngine", "1");
-    m_reply = m_manager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    if(m_handler.useProxy(OCRPlatform::OCR_Space))
+        m_reply = m_proxiedManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    else
+        m_reply = m_normalManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
 
     connectReply(m_reply);
 }

@@ -13,10 +13,12 @@ extern QMap<int, QString> baidu::ErrorCodeMap;
 
 namespace baidu {
 
-BaiduAPI::BaiduAPI(QNetworkAccessManager *manager, QObject *parent)
-    : APIBase(OCRPlatform::Baidu, manager, parent)
-    , m_tokenGetter(manager, this)
-    , m_tableProcessor(manager, this)
+BaiduAPI::BaiduAPI(QNetworkAccessManager *normalManager,
+                   QNetworkAccessManager *proxiedManager,
+                   QObject *parent)
+    : APIBase(OCRPlatform::Baidu, normalManager, proxiedManager, parent)
+    , m_tokenGetter(normalManager, proxiedManager, this)
+    , m_tableProcessor(normalManager, proxiedManager, this)
 {
     connect(&m_tokenGetter, &BaiduAccessToken::authorizationFailure,
             this, &BaiduAPI::authorizationFailure);
@@ -79,8 +81,12 @@ void BaiduAPI::processBase(QString url)
 
     QUrlQuery query;
     query.addQueryItem("image", QUrl::toPercentEncoding(m_base64str));
-    m_reply = m_manager->post(request,
-                              query.toString(QUrl::FullyEncoded).toUtf8());
+    if(m_handler.useProxy(OCRPlatform::Baidu))
+        m_reply = m_proxiedManager->post(request,
+                                         query.toString(QUrl::FullyEncoded).toUtf8());
+    else
+        m_reply = m_normalManager->post(request,
+                                        query.toString(QUrl::FullyEncoded).toUtf8());
 
     connectReply(m_reply);
 }

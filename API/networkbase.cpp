@@ -3,9 +3,11 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-NetworkBase::NetworkBase(QNetworkAccessManager *manager, QObject *parent)
-    : QObject(parent), m_manager(manager)
+NetworkBase::NetworkBase(QNetworkAccessManager *normalManager, QNetworkAccessManager *proxiedManager, QObject *parent)
+    : QObject(parent)
+    , m_normalManager(normalManager), m_proxiedManager(proxiedManager)
 {
+
 }
 
 void NetworkBase::setHeader(QNetworkRequest &request)
