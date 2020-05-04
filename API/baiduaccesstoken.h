@@ -7,7 +7,6 @@ namespace baidu {
 
 class BaiduAccessToken : public NetworkBase {
     Q_OBJECT
-
 public:
     explicit BaiduAccessToken(QNetworkAccessManager *m_manager, QObject *parent = nullptr);
     QString getAccessToken();
@@ -18,8 +17,7 @@ private:
     QString m_accessToken;
     int m_expiredTime;
 
-private slots:
-    void readyRead();
+public slots:
     void parse() override;
 
 signals:

@@ -44,15 +44,16 @@ void OCRSpaceAPI::processNoamrlText()
 
 void OCRSpaceAPI::parse()
 {
-//    qDebug() << m_array;
-    QJsonDocument doc(QJsonDocument::fromJson(m_array));
-    QJsonObject obj(doc.object());
+    m_reply->deleteLater();
 
-    qDebug() << obj;
+    qDebug().noquote() << "OCR.Space: request finished, start parsing";
+    QJsonObject obj(QJsonDocument::fromJson(m_array).object());
 
     int exitCode = obj["OCRExitCode"].toInt();
     if(exitCode != 1) {
         emit OCRFailure(OCRPlatform::OCR_Space, exitCode, ErrorCodeMap[exitCode]);
+        qWarning().noquote() << QString("parse failed with exit code: %1")
+                                .arg(exitCode);
         if(exitCode != 2) return;
     }
 
@@ -62,6 +63,8 @@ void OCRSpaceAPI::parse()
         if(!res.isEmpty()) res += '\n';
         res += parseSingleResult(p.toObject());
     }
+
+    qDebug().noquote() << "parse successful";
     emit OCRSuccessful(res);
 }
 
@@ -70,10 +73,12 @@ QString OCRSpaceAPI::parseSingleResult(const QJsonObject &source)
     QJsonObject obj = source;
     int exitCode = obj["FileParseExitCode"].toInt();
     if(exitCode != 1) {
-        emit OCRFailure(OCRPlatform::OCR_Space, exitCode,
-                        QString("Message: %1\nDetail:%2")
-                        .arg(obj["ErrorMessage"].toString())
-                        .arg(obj["ErrorDetails"].toString()));
+        QString errMsg =  QString("Message: %1\nDetail:%2")
+                          .arg(obj["ErrorMessage"].toString())
+                          .arg(obj["ErrorDetails"].toString());
+        qWarning().noquote() << QString("parse failed with exit code: %1\n%2")
+                                .arg(exitCode).arg(errMsg);
+        emit OCRFailure(OCRPlatform::OCR_Space, exitCode, errMsg);
         return "";
     }
 

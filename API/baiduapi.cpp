@@ -7,7 +7,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
 #include <QDebug>
 
 extern QMap<int, QString> baidu::ErrorCodeMap;
@@ -16,22 +15,22 @@ namespace baidu {
 
 BaiduAPI::BaiduAPI(QNetworkAccessManager *manager, QObject *parent)
     : APIBase(OCRPlatform::Baidu, manager, parent)
-    , m_tokengetter(manager, this)
+    , m_tokenGetter(manager, this)
     , m_tableProcessor(manager, this)
 {
-    connect(&m_tokengetter, &BaiduAccessToken::authorizationFailure,
-            this, &APIBase::authorizationFailure);
+    connect(&m_tokenGetter, &BaiduAccessToken::authorizationFailure,
+            this, &BaiduAPI::authorizationFailure);
 
     connect(&m_tableProcessor, &BaiduTableProcessor::OCRSuccessful,
-            this, &APIBase::OCRSuccessful);
+            this, &BaiduAPI::OCRSuccessful);
     connect(&m_tableProcessor, &BaiduTableProcessor::OCRFailure,
-            this, &APIBase::OCRFailure);
+            this, &BaiduAPI::OCRFailure);
 }
 
 QUrl BaiduAPI::flavoredUrl(const QString &s)
 {
     QUrl url(s); QUrlQuery query;
-    query.addQueryItem("access_token", m_tokengetter.getAccessToken());
+    query.addQueryItem("access_token", m_tokenGetter.getAccessToken());
     url.setQuery(query);
     return url;
 }
@@ -80,45 +79,45 @@ void BaiduAPI::processBase(QString url)
 
     QUrlQuery query;
     query.addQueryItem("image", QUrl::toPercentEncoding(m_base64str));
-    m_reply = m_manager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    m_reply = m_manager->post(request,
+                              query.toString(QUrl::FullyEncoded).toUtf8());
 
     connectReply(m_reply);
 }
 
 void BaiduAPI::parse()
 {
-    qDebug() << "BaiduAPI: start parsing";
     m_reply->deleteLater();
 
+    qDebug().noquote() << "Baidu: request finished, start parsing";
     QJsonObject obj = QJsonDocument::fromJson(m_array).object();
     if(obj.contains("error_code")){
         int errCode = obj["error_code"].toInt();
-        emit OCRFailure(OCRPlatform::Baidu, errCode,
-                        QString("Message: %1\nDetail: %2")
+        QString errMsg =  QString("Message: %1\nDetail: %2")
                         .arg(obj["error_msg"].toString())
-                        .arg(ErrorCodeMap[errCode]));
+                        .arg(ErrorCodeMap[errCode]);
+        qWarning().noquote() << QString("parse failed with error code: %1\n%2")
+                                .arg(errCode).arg(errMsg);
+        emit OCRFailure(OCRPlatform::Baidu, errCode, errMsg);
         return;
     }
 
     QString result;
-    if (m_req.m_mode == OCRMode::NormalText
-    || m_req.m_mode == OCRMode::Handwriting) {
-        if(m_req.m_mode == OCRMode::NormalText) qDebug() << "Normal Text";
-        else qDebug() << "Handwriting";
-        QJsonArray array = obj["words_result"].toArray();
-        for(auto v : array){
-            QJsonObject obj(v.toObject());
-            result += obj["words"].toString() + '\n';
-        }
-    } else if (m_req.m_mode == OCRMode::QRCode) {
-        qDebug() << "QR Code";
+    if (m_req.m_mode == OCRMode::QRCode) {
         QJsonArray array = obj["codes_result"].toArray();
         for(auto v : array){
             QJsonArray texts = v.toObject()["text"].toArray();
             for(auto x : texts) result += x.toString() + '\n';
         }
+    } else {
+        QJsonArray array = obj["words_result"].toArray();
+        for(auto v : array){
+            QJsonObject obj(v.toObject());
+            result += obj["words"].toString() + '\n';
+        }
     }
 
+    qDebug().noquote() << "parse successful";
     emit OCRSuccessful(result);
 }
 

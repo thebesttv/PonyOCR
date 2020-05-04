@@ -26,7 +26,9 @@ private:
 private slots:
     void parse() override;
     void parseTable(const QByteArray &srcArray);
-    QString parseOneThird(const QJsonArray &array);
+    void parseOneThird(const QJsonArray &array,
+                       QMap<QPair<int, int>, QString> &cells,
+                       int &startRow, int &maxCol);
     QString parseCell(const QJsonObject &cell, int &row, int &col);
 
 signals:

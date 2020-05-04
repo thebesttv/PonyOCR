@@ -20,6 +20,7 @@ BaiduTableProcessor::BaiduTableProcessor(QNetworkAccessManager *manager, QObject
 void BaiduTableProcessor::process(const QString &base64str,
                                   const QUrl &requestUrl, const QUrl &replyUrl)
 {
+    qDebug().noquote() << "Baidu: start table processing";
     m_requestUrl = requestUrl, m_replyUrl = replyUrl;
     m_base64str = base64str;
     tableRequest();
@@ -59,23 +60,27 @@ void BaiduTableProcessor::parse()
 
     if(obj.contains("error_code")){
         int errCode = obj["error_code"].toInt();
-        emit OCRFailure(OCRPlatform::Baidu, errCode,
-                        QString("Message: %1\nDetail: %2")
-                        .arg(obj["error_msg"].toString())
-                        .arg(ErrorCodeMap[errCode]));
+        QString errMsg = QString("Message: %1\nDetail: %2")
+                         .arg(obj["error_msg"].toString())
+                         .arg(ErrorCodeMap[errCode]);
+        qDebug().noquote() << QString("table parse failed, error code: %1\n%2")
+                              .arg(errCode).arg(errMsg);
+        emit OCRFailure(OCRPlatform::Baidu, errCode, errMsg);
         return;
     }
 
     if(m_stage == 1) {   // parse eequest
         m_requestID = obj["result"].toArray()[0].toObject()["request_id"].toString();
-        QTimer::singleShot(1000, this, &BaiduTableProcessor::tableReply);
+        qDebug() << "get result id";
+        QTimer::singleShot(2000, this, &BaiduTableProcessor::tableReply);
     } else if(m_stage == 2) {   // parse reply
         obj = obj["result"].toObject();
         int percentage = obj["percent"].toInt();
-        qDebug() << "percentage:" << percentage;
+        qDebug() << "remote table processing percentage:" << percentage;
         emit OCRSuccessful(QString("processing ... %1%").arg(percentage));
-        if(percentage != 100) { // not done, wait for 1s and request again
-            QTimer::singleShot(1000, this, &BaiduTableProcessor::tableReply);
+        if(percentage != 100) {
+            // not done, wait for some time and request again
+            QTimer::singleShot(800, this, &BaiduTableProcessor::tableReply);
         } else {
             m_stage = 0;
             parseTable(obj["result_data"].toString().toUtf8());
@@ -85,49 +90,55 @@ void BaiduTableProcessor::parse()
 
 void BaiduTableProcessor::parseTable(const QByteArray &srcArray)
 {
-    QJsonDocument doc(QJsonDocument::fromJson(srcArray));
-    QJsonObject obj(doc.object());
+    QJsonObject obj(QJsonDocument::fromJson(srcArray).object());
     QJsonArray forms(obj["forms"].toArray());
     QString res;
     for(auto form : forms) {
         QJsonObject formObj = form.toObject();
         if(!res.isEmpty()) res += '\n';
-        res += parseOneThird(formObj["header"].toArray());
-        res += parseOneThird(formObj["body"].toArray());
-        res += parseOneThird(formObj["footer"].toArray());
+        QMap<QPair<int, int>, QString> cells;
+        int startRow = 0, maxCol = 0;
+        parseOneThird(formObj["header"].toArray(), cells, startRow, maxCol);
+        parseOneThird(formObj["body"].toArray(),   cells, startRow, maxCol);
+        parseOneThird(formObj["footer"].toArray(), cells, startRow, maxCol);
+        if(cells.isEmpty()) continue;
+
+        // output as markdown table format
+        res += '|';
+        for(int c = 1; c <= maxCol; ++c)
+            res += QString(" %1 |").arg(cells[{1, c}]);
+        res += "\n|";
+        for(int c = 1; c <= maxCol; ++c)
+            res += QString('-').repeated(qMax(cells[{1, c}].size(), 1)) + "|";
+        res += "\n";
+
+        for(int r = 2; r <= startRow; ++r) {
+            res += '|';
+            for(int c = 1; c <= maxCol; ++c)
+                res += QString(" %1 |").arg(cells[{r, c}]);
+            res += '\n';
+        }
     }
     emit OCRSuccessful(res);
 }
 
-QString BaiduTableProcessor::parseOneThird(const QJsonArray &array)
+void BaiduTableProcessor::parseOneThird(const QJsonArray &array,
+                                        QMap<QPair<int, int>, QString> &cells,
+                                        int &startRow, int &maxCol)
 {
-    QString res;
-    QMap<QPair<int, int>, QString> cells;
     int row, col; QString word;
+    int maxRow = startRow;
     for(auto cell : array) {
         word = parseCell(cell.toObject(), row, col);
+        if(word.isEmpty()) continue;
+        row += startRow;
+        maxRow = qMax(maxRow, row);
+        maxCol = qMax(maxCol, col);
         cells[{row, col}] = word;
-        qDebug() << QString("(%1,%2): %3")
-                    .arg(row)
-                    .arg(col)
-                    .arg(word);
+//        qDebug().noquote() << QString("table cell(%1,%2): %3")
+//                              .arg(row).arg(col).arg(word);
     }
-    // traverse all cells
-    QMapIterator<QPair<int,int>, QString> it(cells);
-    row = 1, col = 1;
-    while(it.hasNext()) {
-        it.next();
-        int tr = it.key().first, tc = it.key().second;
-        while(row < tr) {
-            ++row; col = 0;
-            res.push_back('\n');
-        }
-        while(col < tc) {
-            ++col; res.push_back('\t');
-        }
-        res.push_back(it.value());
-    }
-    return res;
+    startRow = maxRow;
 }
 
 QString BaiduTableProcessor::parseCell(const QJsonObject &cell, int &row, int &col)

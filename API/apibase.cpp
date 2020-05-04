@@ -2,7 +2,6 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QPixmap>
-
 #include <QDebug>
 
 APIBase::APIBase(OCRPlatform platform, QNetworkAccessManager *manager, QObject *parent)
@@ -21,10 +20,10 @@ void APIBase::getBase64Img()
 
 void APIBase::_process(const OCRRequest &request)
 {
-    qDebug() << QString("%1: process request (%2, %3)")
-                .arg(ConfigHandler::asPlatformName(m_platform))
-                .arg(ConfigHandler::asPlatformName(request.m_platform))
-                .arg(ConfigHandler::asModeName(request.m_mode));
+    qDebug().noquote() << QString("%1: process request (%2, %3)")
+                          .arg(ConfigHandler::asPlatformName(m_platform))
+                          .arg(ConfigHandler::asPlatformName(request.m_platform))
+                          .arg(ConfigHandler::asModeName(request.m_mode));
 
     m_array.clear();
 

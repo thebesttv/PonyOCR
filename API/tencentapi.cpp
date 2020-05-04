@@ -25,6 +25,7 @@ TencentAPI::TencentAPI(QNetworkAccessManager *manager, QObject *parent)
 
 void TencentAPI::process(const OCRRequest &req)
 {
+    // update AppID & AppKey
     m_AppID = m_handler.APIKey1(OCRPlatform::Tencent);
     m_AppKey = m_handler.APIKey2(OCRPlatform::Tencent);
     _process(req);
@@ -33,7 +34,7 @@ void TencentAPI::process(const OCRRequest &req)
 QString TencentAPI::getSigniture(const QString &ori)
 {
     QString s = ori + "&app_key=" + m_AppKey;
-    return QCryptographicHash::hash(s.toUtf8(),QCryptographicHash::Md5).toHex().toUpper();
+    return QCryptographicHash::hash(s.toUtf8(), QCryptographicHash::Md5).toHex().toUpper();
 }
 
 void TencentAPI::processNoamrlText()
@@ -48,15 +49,15 @@ void TencentAPI::processHandwriting()
 
 void TencentAPI::processBase(QString url)
 {
-    qDebug() << QString("TencentAPI: processBase(%1)").arg(url);
     QNetworkRequest request(url);
     setHeader(request);
 
+    // time stamp
     int now = time(nullptr);
-    // create 32 byte random string from random uuid
+    // generate 32 byte random string from random uuid
     QString randomStr(QUuid::createUuid().toString());
     randomStr.remove(QRegularExpression("{|}|-"));
-    qDebug() << "TencentAPI: generate random string as nonce_str: " << randomStr;
+//    qDebug().noquote() << "TencentAPI: generate random string as nonce_str: " << randomStr;
 
     QUrlQuery query;
     query.addQueryItem("app_id", m_AppID);
@@ -65,20 +66,25 @@ void TencentAPI::processBase(QString url)
     query.addQueryItem("time_stamp", QString::number(now));
     query.addQueryItem("sign", getSigniture(query.toString(QUrl::FullyEncoded)));
 
-    m_reply = m_manager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
+    m_reply = m_manager->post(request,
+                              query.toString(QUrl::FullyEncoded).toUtf8());
     connectReply(m_reply);
 }
 
 void TencentAPI::parse()
 {
-    qDebug() << "TencentAPI: start parsing";
+    m_reply->deleteLater();
+
+    qDebug().noquote() << "Tencent: request finished, start parsing";
     QJsonObject obj = QJsonDocument::fromJson(m_array).object();
     int errCode = obj["ret"].toInt();
     if(errCode != 0) {  // error
-        emit OCRFailure(OCRPlatform::Tencent, errCode,
-                        QString("Message: %1\nDetail: %2")
-                        .arg(obj["msg"].toString())
-                        .arg(ErrorCodeMap[errCode]));
+        QString errMsg = QString("Message: %1\nDetail: %2")
+                         .arg(obj["msg"].toString())
+                         .arg(ErrorCodeMap[errCode]);
+        qWarning().noquote() << QString("parse failed with error code: %1\n%2")
+                                .arg(errCode).arg(errMsg);
+        emit OCRFailure(OCRPlatform::Tencent, errCode, errMsg);
         return;
     }
 
@@ -88,6 +94,7 @@ void TencentAPI::parse()
         result += x.toObject()["itemstring"].toString() + "\n";
     }
 
+    qDebug().noquote() << "parse successful";
     emit OCRSuccessful(result);
 }
 

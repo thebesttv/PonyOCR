@@ -11,12 +11,11 @@ namespace baidu {
 
 class BaiduAPI : public APIBase {
     Q_OBJECT
-
 public:
     BaiduAPI(QNetworkAccessManager *m_manager, QObject *parent = nullptr);
 
 private:
-    BaiduAccessToken m_tokengetter;
+    BaiduAccessToken m_tokenGetter;
     BaiduTableProcessor m_tableProcessor;
 
     QUrl flavoredUrl(const QString &s);

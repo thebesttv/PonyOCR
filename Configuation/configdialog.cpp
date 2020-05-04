@@ -45,9 +45,12 @@ void ConfigDialog::createButtonBox()
 
 void ConfigDialog::createBaiduWidget()
 {
-    m_baiduWidget = new APIConfigWidget(OCRPlatform::Baidu, "API Key", "Secret Key",
-                                      tr("API is considered unavailable"
-                                         "if the first key is left empty"));
+    m_baiduWidget = new APIConfigWidget(OCRPlatform::Baidu,
+                                        "API Key", "Secret Key",
+                                        tr("API is considered unavailable if the first key is left empty."
+                                           "\n\nTable recognition result will output as markdown table format,"
+                                           "\nyou can copy the html format table from markdown preview."
+                                           ));
     m_baiduWidget->addMode(OCRMode::NormalText);
     m_baiduWidget->addMode(OCRMode::Handwriting);
     m_baiduWidget->addMode(OCRMode::Formula);

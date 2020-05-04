@@ -52,11 +52,6 @@ QString BaiduAccessToken::getAccessToken()
     return m_accessToken;
 }
 
-void BaiduAccessToken::readyRead()
-{
-    m_array.append(m_reply->readAll());
-}
-
 void BaiduAccessToken::parse()
 {
     m_reply->deleteLater();

@@ -9,6 +9,7 @@ class QNetworkRequest;
 class QNetworkReply;
 
 class NetworkBase : public QObject {
+    Q_OBJECT
 public:
     explicit NetworkBase(QNetworkAccessManager *manager, QObject *parent = nullptr);
 
@@ -21,7 +22,7 @@ protected:
     virtual void setHeader(QNetworkRequest &request);
     virtual void connectReply(QNetworkReply *reply);
 
-private slots:
+public slots:
     void readyRead();
     virtual void parse();
 };
