@@ -53,6 +53,16 @@ bool ConfigHandler::colorIsDark(const QColor &c)
     return isWhite;
 }
 
+bool ConfigHandler::previewVisible()
+{
+    return settings.value("previewvisible", true).toBool();
+}
+
+void ConfigHandler::setPreviewVisible(bool checked)
+{
+    settings.setValue("previewvisible", checked);
+}
+
 int ConfigHandler::handlerRadius()
 {
     return 4;

@@ -41,24 +41,35 @@ PonyOCR::PonyOCR(QWidget *parent)
 
     m_textEdit = new QPlainTextEdit();
     m_textEdit->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    m_textEdit->setMinimumSize(400, 400);
+
     initMarkdownPreview();
 
-    QSplitter *splitter = new QSplitter(this);
-    splitter->addWidget(m_textEdit);
-    splitter->addWidget(m_view);
+    m_splitter = new QSplitter(this);
+    m_splitter->addWidget(m_textEdit);
+    m_splitter->addWidget(m_view);
     // evenly distribute two widgets
     // https://stackoverflow.com/questions/43831474/how-to-equally-distribute-the-width-of-qsplitter/43835396
-    splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
-    setCentralWidget(splitter);
+    m_splitter->setSizes(QList<int>({INT_MAX, INT_MAX}));
+    setCentralWidget(m_splitter);
+    // forbid collapsing
+    m_splitter->setCollapsible(0, false);
+    m_splitter->setCollapsible(1, false);
 
-    setMinimumWidth(800);
-    setMinimumHeight(450);
+    if(!m_showPreviewAction->isChecked()) {
+        m_view->hide();
+    }
 
     // load readme
     QFile file(":/README.md");
     file.open(QIODevice::ReadOnly);
     m_textEdit->setPlainText(file.readAll());
     file.close();
+}
+
+PonyOCR::~PonyOCR()
+{
+    m_handler.setPreviewVisible(m_showPreviewAction->isChecked());
 }
 
 void PonyOCR::process(OCRRequest req)
@@ -137,6 +148,17 @@ void PonyOCR::initAction()
     m_outputModeButton->setToolTip(tr("Select insert mode"));
     m_outputModeButton->setPopupMode(QToolButton::InstantPopup);
     m_outputModeButton->setMenu(m_outputModeMenu);
+
+    // show preview
+    m_showPreviewAction = new QAction(QIcon(":/img/markdown.svg"),
+                                      tr("Show markdown preview"), this);
+    m_showPreviewAction->setCheckable(true);
+    m_showPreviewAction->setChecked(m_handler.previewVisible());
+
+    connect(m_showPreviewAction, &QAction::toggled, [this] (bool checked) {
+        m_view->setVisible(checked);
+        m_splitter->refresh();
+    });
 }
 
 void PonyOCR::initToolBar()
@@ -146,6 +168,7 @@ void PonyOCR::initToolBar()
     toolBar->addAction(m_configAction);
     toolBar->addSeparator();
     toolBar->addWidget(m_outputModeButton);
+    toolBar->addAction(m_showPreviewAction);
 }
 
 void PonyOCR::initMarkdownPreview()
@@ -155,6 +178,7 @@ void PonyOCR::initMarkdownPreview()
     m_view = new QWebEngineView;
     m_view->setPage(m_page);
     m_view->setZoomFactor(1.2);
+    m_view->setMinimumSize(400, 400);
 
     connect(m_textEdit, &QPlainTextEdit::textChanged,
             [this]() { m_content.setText(m_textEdit->toPlainText());

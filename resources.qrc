@@ -10,5 +10,9 @@
         <file>img/ins_append.svg</file>
         <file>img/ins_insert.svg</file>
         <file>img/ins_replace.svg</file>
+        <file>img/find_replace.svg</file>
+        <file>img/go-down.svg</file>
+        <file>img/go-up.svg</file>
+        <file>img/markdown.svg</file>
     </qresource>
 </RCC>

@@ -44,6 +44,9 @@ public:
 
     bool colorIsDark(const QColor &c);
 
+    bool previewVisible();
+    void setPreviewVisible(bool checked);
+
     int handlerRadius();
 
     OCRPlatform defaultPlatform(OCRMode mode);

@@ -21,7 +21,7 @@ HEADERS += ocrrequest.h \
            ponyocr.h
 
 SOURCES += main.cpp \
-           ponyocr.cpp \
+           ponyocr.cpp
 
 include(Capture/capture.pri)
 include(API/api.pri)

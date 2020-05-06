@@ -14,12 +14,14 @@ class QToolButton;
 class QNetworkAccessManager;
 class QPlainTextEdit;
 class QWebEngineView;
+class QSplitter;
 
 class PonyOCR : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit PonyOCR(QWidget *parent = nullptr);
+    ~PonyOCR();
 
 private:
     ConfigHandler m_handler;
@@ -35,6 +37,9 @@ private:
     QWebEngineView *m_view;
     Document m_content;
     PreviewPage *m_page;
+    QSplitter *m_splitter;
+
+    QAction *m_showPreviewAction;
 
     enum OutputMode {
         Replace, Append, Insert
