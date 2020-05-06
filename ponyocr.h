@@ -9,6 +9,8 @@
 #include "Markdown/previewpage.h"
 
 class QAction;
+class QMenu;
+class QToolButton;
 class QNetworkAccessManager;
 class QPlainTextEdit;
 class QWebEngineView;
@@ -33,6 +35,15 @@ private:
     QWebEngineView *m_view;
     Document m_content;
     PreviewPage *m_page;
+
+    enum OutputMode {
+        Replace, Append, Insert
+    } m_outputMode;
+    QAction *m_outputModeReplaceAction;
+    QAction *m_outputModeAppendAction;
+    QAction *m_outputModeInsertAction;
+    QMenu *m_outputModeMenu;
+    QToolButton *m_outputModeButton;
 
     void about();
     void initAction();

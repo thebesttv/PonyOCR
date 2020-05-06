@@ -9,6 +9,7 @@
 #include <QApplication> // used for clipboard action
 #include <QClipboard>
 #include <QToolBar>
+#include <QToolButton>
 #include <QMenu>
 #include <QMenuBar>
 #include <QSplitter>
@@ -20,6 +21,7 @@ PonyOCR::PonyOCR(QWidget *parent)
     , m_normalManager(new QNetworkAccessManager)
     , m_proxiedManager(new QNetworkAccessManager)
     , m_api(m_normalManager, m_proxiedManager, this)
+    , m_outputMode(Replace) // default to replace
 {
     setWindowTitle(tr("PonyOCR"));
 
@@ -66,7 +68,15 @@ void PonyOCR::process(OCRRequest req)
 
 void PonyOCR::onOCRSuccessful(QString s)
 {
-    m_textEdit->setPlainText(s);
+    if(m_outputMode == Replace) {
+        m_textEdit->setPlainText(s);
+    } else if(m_outputMode == Append) {
+        m_textEdit->moveCursor(QTextCursor::End);
+        m_textEdit->insertPlainText('\n' + s);
+    } else {
+        m_textEdit->insertPlainText(s);
+    }
+
     if(m_handler.copyToClipboard())
         qApp->clipboard()->setText(s);
 }
@@ -80,7 +90,8 @@ void PonyOCR::about()
 
 void PonyOCR::initAction()
 {
-    m_OCRAction = new QAction(tr("OCR"), this);
+    m_OCRAction = new QAction("OCR", this);
+    m_OCRAction->setToolTip("Take screenshot and recognize");
     connect(m_OCRAction, &QAction::triggered, [this] () {
         CaptureWidget *widget = new CaptureWidget(this);
 #ifdef Q_OS_WIN
@@ -94,9 +105,38 @@ void PonyOCR::initAction()
 
     m_configAction = new QAction(tr("Settings"), this);
     connect(m_configAction, &QAction::triggered, [this] () {
-        ConfigDialog *dialog = new ConfigDialog(m_proxiedManager, nullptr);   // TODO: DEBUG
+        // TODO: DEBUG
+        ConfigDialog *dialog = new ConfigDialog(m_proxiedManager, nullptr);
         dialog->show();
     });
+
+    // output mode
+    m_outputModeReplaceAction = new QAction(QIcon(":/img/ins_replace.svg"),
+                                            tr("Replace current text"), this);
+    m_outputModeReplaceAction->setData(static_cast<int>(OutputMode::Replace));
+
+    m_outputModeAppendAction = new QAction(QIcon(":/img/ins_append.svg"),
+                                           tr("Append to text"), this);
+    m_outputModeAppendAction->setData(static_cast<int>(OutputMode::Append));
+
+    m_outputModeInsertAction = new QAction(QIcon(":/img/ins_insert.svg"),
+                                           tr("Insert at cursor"), this);
+    m_outputModeInsertAction->setData(static_cast<int>(OutputMode::Insert));
+
+    m_outputModeMenu = new QMenu(this);
+    m_outputModeMenu->addAction(m_outputModeReplaceAction);
+    m_outputModeMenu->addAction(m_outputModeAppendAction);
+    m_outputModeMenu->addAction(m_outputModeInsertAction);
+    connect(m_outputModeMenu, &QMenu::triggered, [this](QAction *action) {
+        m_outputMode = static_cast<OutputMode>(action->data().toInt());
+        m_outputModeButton->setIcon(action->icon());
+    });
+
+    m_outputModeButton = new QToolButton;
+    m_outputModeButton->setIcon(m_outputModeReplaceAction->icon());
+    m_outputModeButton->setToolTip(tr("Select insert mode"));
+    m_outputModeButton->setPopupMode(QToolButton::InstantPopup);
+    m_outputModeButton->setMenu(m_outputModeMenu);
 }
 
 void PonyOCR::initToolBar()
@@ -104,6 +144,8 @@ void PonyOCR::initToolBar()
     QToolBar *toolBar = addToolBar(tr("MainToolBar"));
     toolBar->addAction(m_OCRAction);
     toolBar->addAction(m_configAction);
+    toolBar->addSeparator();
+    toolBar->addWidget(m_outputModeButton);
 }
 
 void PonyOCR::initMarkdownPreview()
