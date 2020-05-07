@@ -2,6 +2,7 @@
 #include "ponyocr.h"
 #include <QApplication>
 #include <QDateTime>
+#include <QDir>
 #include <QFile>
 #include <QTextStream>
 
@@ -25,7 +26,9 @@ void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
                   .arg(typeStr)
                   .arg(msg);
 
-    QFile outFile("log.txt");
+    // log file at application directory
+    QDir dir(qApp->applicationDirPath());
+    QFile outFile(dir.absoluteFilePath("log.txt"));
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
