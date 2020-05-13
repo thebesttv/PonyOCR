@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>index-katex.html</file>
-        <file>markdown.css</file>
-        <file>marked.min.js</file>
-        <file>index-mathjax.html</file>
         <file>README.md</file>
         <file>img/icon.ico</file>
         <file>img/PonyOCR.png</file>
@@ -14,5 +10,9 @@
         <file>img/go-down.svg</file>
         <file>img/go-up.svg</file>
         <file>img/markdown.svg</file>
+        <file>Markdown/index-katex.html</file>
+        <file>Markdown/index-mathjax.html</file>
+        <file>Markdown/markdown.css</file>
+        <file>Markdown/marked.min.js</file>
     </qresource>
 </RCC>

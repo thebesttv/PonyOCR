@@ -187,5 +187,5 @@ void PonyOCR::initMarkdownPreview()
     QWebChannel *channel = new QWebChannel(this);
     channel->registerObject(QStringLiteral("content"), &m_content);
     m_page->setWebChannel(channel);
-    m_view->setUrl(QUrl("qrc:/index-katex.html"));
+    m_view->setUrl(QUrl("qrc:/Markdown/index-katex.html"));
 }
