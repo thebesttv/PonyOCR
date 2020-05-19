@@ -12,8 +12,8 @@ class BaiduTableProcessor : public NetworkBase {
     Q_OBJECT
 public:
     explicit BaiduTableProcessor(QNetworkAccessManager *normalManager,
-                        QNetworkAccessManager *proxiedManager,
-                        QObject *parent = nullptr);
+                                 QNetworkAccessManager *proxiedManager,
+                                 QObject *parent = nullptr);
     void process(const QString &base64str, const QUrl &requestUrl, const QUrl &replyUrl);
 
 private:
