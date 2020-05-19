@@ -52,10 +52,10 @@ void ConfigDialog::createBaiduWidget()
 {
     m_baiduWidget = new APIConfigWidget(OCRPlatform::Baidu,
                                         "API Key", "Secret Key",
-                                        tr("API is considered unavailable if the first key is left empty."
-                                           "\n\nTable recognition result will output as markdown table format,"
-                                           "\nyou can copy the html format table from markdown preview."
-                                           ));
+      tr("API is considered unavailable if the first key is left empty."
+         "\n\nTable recognition result will output as markdown table format,"
+         "\nyou can copy the html format table from markdown preview."
+         ));
     m_baiduWidget->addMode(OCRMode::NormalText);
     m_baiduWidget->addMode(OCRMode::Handwriting);
     m_baiduWidget->addMode(OCRMode::Formula);
@@ -72,8 +72,8 @@ void ConfigDialog::createBaiduWidget()
 void ConfigDialog::createTencentWidget()
 {
     m_tencentWidget = new APIConfigWidget(OCRPlatform::Tencent, "APPID", "APPKey",
-                                      tr("API is considered unavailable"
-                                         "if the first key is left empty"));
+      tr("API is considered unavailable if the first key is left empty."
+         ));
     m_tencentWidget->addMode(OCRMode::NormalText);
     m_tencentWidget->addMode(OCRMode::Handwriting);
 
@@ -84,9 +84,14 @@ void ConfigDialog::createTencentWidget()
 void ConfigDialog::createOCRSpaceWidget()
 {
     m_ocrspaceWidget = new APIConfigWidget(OCRPlatform::OCR_Space, "API Key", "disabled",
-                                           tr("API is considered unavailable"
-                                              "if the first key is left empty"));
+      tr("API is considered unavailable if the first key is left empty."
+         "\n\nThe table mode of this API will not output an actual table,"
+         "\nit will only better organise structured text (table, receipt, etc.)"
+         "\n\nNote that this platform will have a delay of 2-3s,"
+         "\nand sometimes it's not very stable"
+         ));
     m_ocrspaceWidget->addMode(OCRMode::NormalText);
+    m_ocrspaceWidget->addMode(OCRMode::Table);
 
     m_tab->addTab(m_ocrspaceWidget, ConfigHandler::asPlatformName(OCRPlatform::OCR_Space));
     m_generalWidget->addAPI(m_ocrspaceWidget);
@@ -95,8 +100,8 @@ void ConfigDialog::createOCRSpaceWidget()
 void ConfigDialog::createMathpixWidget()
 {
     m_mathpixWidget = new APIConfigWidget(OCRPlatform::Mathpix, "APP ID", "APP Key",
-                                           tr("API is considered unavailable"
-                                              "if the first key is left empty"));
+      tr("API is considered unavailable if the first key is left empty."
+         ));
     m_mathpixWidget->addMode(OCRMode::Formula);
 
     m_tab->addTab(m_mathpixWidget, ConfigHandler::asPlatformName(OCRPlatform::Mathpix));

@@ -28,23 +28,35 @@ void OCRSpaceAPI::setHeader(QNetworkRequest &request)
     request.setRawHeader("apikey", m_handler.APIKey1(OCRPlatform::OCR_Space).toUtf8());
 }
 
-void OCRSpaceAPI::processNoamrlText()
+void OCRSpaceAPI::processBase(bool isTable, int engine)
 {
+    if(engine != 1 && engine !=2) return;
     QNetworkRequest request(GENERAL);
     setHeader(request);
 
     QUrlQuery query;
-    m_base64str = "data:image/png;base64," + m_base64str;
+    m_base64str = "data:image/png;base64," + m_base64str; // add file type
     query.addQueryItem("base64Image",  QUrl::toPercentEncoding(m_base64str));
     query.addQueryItem("language", "chs");
+    query.addQueryItem("isTable", isTable ? "true" : "false");
     query.addQueryItem("scale", "true");
-    query.addQueryItem("OCREngine", "1");
+    query.addQueryItem("OCREngine", engine == 1 ? "1" : "2");
     if(m_handler.useProxy(OCRPlatform::OCR_Space))
         m_reply = m_proxiedManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
     else
         m_reply = m_normalManager->post(request, query.toString(QUrl::FullyEncoded).toUtf8());
 
     connectReply(m_reply);
+}
+
+void OCRSpaceAPI::processNoamrlText()
+{
+    processBase(false, 1);
+}
+
+void OCRSpaceAPI::processTable()
+{
+    processBase(true, 1);
 }
 
 void OCRSpaceAPI::parse()

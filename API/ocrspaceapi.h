@@ -16,7 +16,9 @@ public:
 private:
     void setHeader(QNetworkRequest &request) override;
 
+    void processBase(bool isTable, int engine);
     void processNoamrlText() override;
+    void processTable() override;
     void parse() override;
     QString parseSingleResult(const QJsonObject &source);
 
