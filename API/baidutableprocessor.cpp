@@ -79,12 +79,12 @@ void BaiduTableProcessor::parse()
 
     if(m_stage == 1) {   // parse eequest
         m_requestID = obj["result"].toArray()[0].toObject()["request_id"].toString();
-        qDebug() << "get result id";
+        qDebug().noquote() << "get result id";
         QTimer::singleShot(2000, this, &BaiduTableProcessor::tableReply);
     } else if(m_stage == 2) {   // parse reply
         obj = obj["result"].toObject();
         int percentage = obj["percent"].toInt();
-        qDebug() << "remote table processing percentage:" << percentage;
+        qDebug().noquote() << "remote table processing percentage:" << percentage;
         emit OCRSuccessful(QString("processing ... %1%").arg(percentage));
         if(percentage != 100) {
             // not done, wait for some time and request again
