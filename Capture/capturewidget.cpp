@@ -296,9 +296,9 @@ void CaptureWidget::renderMenu(QPainter &painter, const QString &text)
 void CaptureWidget::pushRequest(OCRPlatform platform, OCRMode mode)
 {
     OCRRequest req(mode, platform, m_img.copy(m_selectionWidget.geometry()));
-    qDebug() << QString("push request (%1, %2)")
-                .arg(ConfigHandler::asPlatformName(platform))
-                .arg(ConfigHandler::asModeName(mode));
+    qDebug().noquote() << QString("push request (%1, %2)")
+                          .arg(ConfigHandler::asPlatformName(platform))
+                          .arg(ConfigHandler::asModeName(mode));
     emit captureTaken(req);
     close();
 }

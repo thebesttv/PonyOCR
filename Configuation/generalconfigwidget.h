@@ -2,30 +2,8 @@
 #define GENERALCONFIGWIDGET_H
 
 #include <QWidget>
-#include <QComboBox>
 #include "confighandler.h"
-
-class QLabel;
-
-class ModeComboBox : public QComboBox {
-    Q_OBJECT
-
-public:
-    ModeComboBox(OCRMode mode, QWidget *parent = nullptr);
-    QLabel *label();
-    void hide();
-    void show();
-
-private:
-    QLabel *m_label;
-    OCRMode m_mode;
-
-private slots:
-    void platformChanged();
-
-signals:
-    void setDefaultPlatform(OCRMode mode, OCRPlatform platform);
-};
+#include "modecombobox.h"
 
 class QPushButton;
 class QSlider;
@@ -59,14 +37,14 @@ private:
 
     QCheckBox *clipboardCheckBox;
 
+    QComboBox *languageCombo;
+
     void setColor();
     void updateComboBox();
     void setDefaultPlatform(OCRMode, OCRPlatform);
 
 protected:
     void paintEvent(QPaintEvent *) override;
-signals:
-
 };
 
 #endif // GENERALCONFIGWIDGET_H

@@ -12,38 +12,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QFormLayout>
-
 #include <QtDebug>
-
-ModeComboBox::ModeComboBox(OCRMode mode, QWidget *parent)
-    : QComboBox(parent), m_mode(mode)
-{
-    m_label = new QLabel(ConfigHandler::asModeName(mode));
-    connect(this, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(platformChanged(int)));
-}
-
-QLabel *ModeComboBox::label()
-{
-    return m_label;
-}
-
-void ModeComboBox::hide()
-{
-    m_label->hide();
-    QComboBox::hide();
-}
-
-void ModeComboBox::show()
-{
-    m_label->show();
-    QComboBox::show();
-}
-
-void ModeComboBox::platformChanged()
-{
-    emit setDefaultPlatform(m_mode, static_cast<OCRPlatform>(currentData().toInt()));
-}
 
 GeneralConfigWidget::GeneralConfigWidget(QWidget *parent) : QWidget(parent)
 {
@@ -79,6 +48,14 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget *parent) : QWidget(parent)
     clipboardCheckBox = new QCheckBox(tr("Copy OCR result to clipboard"));
     clipboardCheckBox->setChecked(handler.copyToClipboard());
 
+    languageCombo = new QComboBox;
+    languageCombo->addItem("English", "en");
+    languageCombo->addItem("简体中文", "zh");
+    languageCombo->setCurrentIndex(handler.language() == QString("en") ? 0 : 1);
+    QLabel *languageLabel = new QLabel(tr("Language (need to restart program):"));
+    QFormLayout *languageLayout = new QFormLayout;
+    languageLayout->addRow(languageLabel, languageCombo);
+
     // mode default platform combo
     comboLayout = new QFormLayout;
     QLabel *defaultLabel = new QLabel(tr("Default platform for mode:"));
@@ -90,16 +67,16 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget *parent) : QWidget(parent)
         comboLayout->addRow(combo->label(), combo);
         combo->show();
     }
-    setMinimumSize(sizeHint());
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(colorLayout);
     mainLayout->addLayout(opacityLayout);
     mainLayout->addWidget(clipboardCheckBox);
+    mainLayout->addLayout(languageLayout);
     mainLayout->addLayout(comboLayout);
     mainLayout->addStretch();
-
     setLayout(mainLayout);
+    setMinimumSize(sizeHint());
 }
 
 void GeneralConfigWidget::saveConfig()
@@ -117,10 +94,12 @@ void GeneralConfigWidget::saveConfig()
         OCRPlatform platform = static_cast<OCRPlatform>(
                     modeList[m]->currentData().toInt());
         handler.setDefaultPlatform(mode, platform);
-        qDebug() << QString("save default for mode %1: %2")
-                    .arg(ConfigHandler::asModeName(mode))
-                    .arg(ConfigHandler::asPlatformName(platform));
+//        qDebug().noquote() << QString("save default for mode %1: %2")
+//                              .arg(ConfigHandler::asModeName(mode))
+//                              .arg(ConfigHandler::asPlatformName(platform));
     }
+
+    handler.setLanguage(languageCombo->currentData().toString());
 }
 
 void GeneralConfigWidget::addAPI(APIConfigWidget *widget)
@@ -140,7 +119,7 @@ void GeneralConfigWidget::setColor()
 
 void GeneralConfigWidget::updateComboBox()
 {
-    qDebug() << "update comboBox";
+//    qDebug().noquote() << "update comboBox";
     for(int m = 0; m < EndOfMode; ++m) {
         OCRMode mode = static_cast<OCRMode>(m);
         modeList[m]->hide();
@@ -151,10 +130,10 @@ void GeneralConfigWidget::updateComboBox()
         for(int i = c-1; i >= 0; --i) {
             modeList[m]->removeItem(i);
         }
-        qDebug() << QString("delete %1 items from mode %2, change to %3")
-                    .arg(c)
-                    .arg(ConfigHandler::asModeName(static_cast<OCRMode>(m)))
-                    .arg(modePlatforms[m].size());
+//        qDebug().noquote() << QString("delete %1 items from mode %2, change to %3")
+//                              .arg(c)
+//                              .arg(ConfigHandler::asModeName(static_cast<OCRMode>(m)))
+//                              .arg(modePlatforms[m].size());
 
         // if has at least one new item
         if (!modePlatforms[m].isEmpty()) {

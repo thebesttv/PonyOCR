@@ -124,14 +124,8 @@ void ConfigHandler::setUseProxy(OCRPlatform platform, bool checked)
 
 bool ConfigHandler::platformAvailable(OCRPlatform platform)
 {
-//    return settings.value(fromPlatform(platform, "ava"), false).toBool();
     return !APIKey1(platform).isEmpty();
 }
-
-//void ConfigHandler::setPlatformAvailability(OCRPlatform platform, bool checked)
-//{
-//    settings.setValue(fromPlatform(platform, "ava"), checked);
-//}
 
 bool ConfigHandler::modeAvailable(OCRPlatform platform, OCRMode mode)
 {
@@ -161,6 +155,16 @@ QString ConfigHandler::APIKey2(OCRPlatform platform)
 void ConfigHandler::setAPIKey2(OCRPlatform platform, const QString &key)
 {
     settings.setValue(fromPlatform(platform, "key2"), key);
+}
+
+QString ConfigHandler::language() const
+{
+    return settings.value("language", "en").toString();
+}
+
+void ConfigHandler::setLanguage(const QString &lang)
+{
+    settings.setValue("language", lang);
 }
 
 QString ConfigHandler::fromPlatform(OCRPlatform platform, const QString &value)

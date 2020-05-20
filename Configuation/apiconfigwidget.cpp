@@ -10,8 +10,7 @@
 APIConfigWidget::APIConfigWidget(OCRPlatform platform,
                                  const QString &kay1name, const QString &key2name,
                                  const QString &description, QWidget *parent)
-    : QWidget(parent)
-    , m_platform(platform)
+    : QWidget(parent), m_platform(platform)
     , m_checkBoxes(EndOfMode), m_boxCnt(0)
 {
 
@@ -26,24 +25,25 @@ APIConfigWidget::APIConfigWidget(OCRPlatform platform,
         keyLayout->addRow(m_label2, m_lineEdit2);
     }
 
-    QGroupBox *modeGroup = new QGroupBox("Mode");
+    QGroupBox *modeGroup = new QGroupBox(tr("Mode"));
     m_grid = new QGridLayout;
     modeGroup->setLayout(m_grid);
 
-    QFrame *frame = new QFrame();
-    frame->setFrameShape(QFrame::HLine);
-    frame->setStyleSheet("background-color: lightgray;");
-
-    m_proxyCheckBox = new QCheckBox("Use Proxy");
+    m_proxyCheckBox = new QCheckBox(tr("Use Proxy"));
     m_proxyCheckBox->setChecked(m_handler.useProxy(m_platform));
 
+    QFrame *separator = new QFrame();
+    separator->setFrameShape(QFrame::HLine);
+    separator->setStyleSheet("background-color: lightgray;");
+
     m_descriptionLabel = new QLabel(description);
+    m_descriptionLabel->setWordWrap(true);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(keyLayout);
     mainLayout->addWidget(modeGroup);
     mainLayout->addWidget(m_proxyCheckBox);
-    mainLayout->addWidget(frame);
+    mainLayout->addWidget(separator);
     mainLayout->addWidget(m_descriptionLabel);
     mainLayout->addStretch();
     setLayout(mainLayout);
@@ -54,7 +54,7 @@ QString APIConfigWidget::key1()
     return m_lineEdit1->text();
 }
 
-QString APIConfigWidget::key2() // always return empty string when key2 is disabled
+QString APIConfigWidget::key2()
 {
     return m_lineEdit2->text();
 }
@@ -92,7 +92,7 @@ void APIConfigWidget::saveConfig()
 
     for(int m = 0; m < EndOfMode; ++m) if(m_checkBoxes[m]) {
         m_handler.setModeAvailability(m_platform, static_cast<OCRMode>(m),
-                                    m_checkBoxes[m]->isChecked());
+                                      m_checkBoxes[m]->isChecked());
     }
 
     m_handler.setUseProxy(m_platform, m_proxyCheckBox->isChecked());

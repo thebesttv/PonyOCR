@@ -1,10 +1,12 @@
 #include "API/apicommon.h"
 #include "ponyocr.h"
+#include "Configuation/confighandler.h"
 #include <QApplication>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
+#include <QTranslator>
 
 void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
 {
@@ -45,6 +47,10 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(msgHandler);
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/img/icon.ico"));
+
+    QTranslator translator;
+    translator.load("pony_" + ConfigHandler().language());
+    app.installTranslator(&translator);
 
     GlobalInitAPIResources();
     PonyOCR ocr;

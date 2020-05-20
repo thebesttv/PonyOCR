@@ -23,7 +23,7 @@ PonyOCR::PonyOCR(QWidget *parent)
     , m_api(m_normalManager, m_proxiedManager, this)
     , m_outputMode(Replace) // default to replace
 {
-    setWindowTitle(tr("PonyOCR"));
+    setWindowTitle("PonyOCR");
 
     initAction();
     initToolBar();
@@ -102,7 +102,7 @@ void PonyOCR::about()
 void PonyOCR::initAction()
 {
     m_OCRAction = new QAction("OCR", this);
-    m_OCRAction->setToolTip("Take screenshot and recognize");
+    m_OCRAction->setToolTip(tr("Take screenshot and recognize"));
     connect(m_OCRAction, &QAction::triggered, [this] () {
         CaptureWidget *widget = new CaptureWidget(this);
 #ifdef Q_OS_WIN

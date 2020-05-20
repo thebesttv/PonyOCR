@@ -29,3 +29,5 @@ include(Markdown/markdown.pri)
 include(Configuation/configuation.pri)
 
 RESOURCES += resources.qrc
+
+TRANSLATIONS += pony_zh.ts

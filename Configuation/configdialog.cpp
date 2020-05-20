@@ -34,6 +34,7 @@ ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *paren
     mainLayout->addWidget(m_tab);
     mainLayout->addWidget(m_buttonBox);
     setLayout(mainLayout);
+    resize(500, 500);
 }
 
 void ConfigDialog::createButtonBox()
@@ -51,8 +52,8 @@ void ConfigDialog::createBaiduWidget()
     m_baiduWidget = new APIConfigWidget(OCRPlatform::Baidu,
                                         "API Key", "Secret Key",
       tr("API is considered unavailable if the first key is left empty."
-         "\n\nTable recognition result will output as markdown table format,"
-         "\nyou can copy the html format table from markdown preview."
+         "\nTable recognition result will output as markdown table format,"
+         "you can copy the html format table from markdown preview."
          ));
     m_baiduWidget->addMode(OCRMode::NormalText);
     m_baiduWidget->addMode(OCRMode::Handwriting);
@@ -83,10 +84,10 @@ void ConfigDialog::createOCRSpaceWidget()
 {
     m_ocrspaceWidget = new APIConfigWidget(OCRPlatform::OCR_Space, "API Key", "disabled",
       tr("API is considered unavailable if the first key is left empty."
-         "\n\nThe table mode of this API will not output an actual table,"
-         "\nit will only better organise structured text (table, receipt, etc.)"
-         "\n\nNote that this platform will have a delay of 2-3s,"
-         "\nand sometimes it's not very stable"
+         "\nThe table mode of this API will not output an actual table,"
+         " it will only better organise structured text (table, receipt, etc)."
+         "\nNote that this platform will have a delay of 2-3s,"
+         " and sometimes it's not very stable."
          ));
     m_ocrspaceWidget->addMode(OCRMode::NormalText);
     m_ocrspaceWidget->addMode(OCRMode::Table);

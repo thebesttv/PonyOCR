@@ -26,9 +26,9 @@ GeneralAPI::GeneralAPI(QNetworkAccessManager *normalManager,
 
 void GeneralAPI::process(const OCRRequest &req)
 {
-    qDebug() << QString("GeneralAPI: process request (%1, %2)")
-                .arg(ConfigHandler::asPlatformName(req.m_platform))
-                .arg(ConfigHandler::asModeName(req.m_mode));
+    qDebug().noquote() << QString("GeneralAPI: process request (%1, %2)")
+                          .arg(ConfigHandler::asPlatformName(req.m_platform))
+                          .arg(ConfigHandler::asModeName(req.m_mode));
     switch(req.m_platform){
     case OCRPlatform::Baidu:
         baiduAPI.process(req); break;

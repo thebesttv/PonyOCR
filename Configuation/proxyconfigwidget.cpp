@@ -12,9 +12,9 @@ ProxyConfigWidget::ProxyConfigWidget(QNetworkAccessManager *proxiedManager,
                                      QWidget *parent)
     : QWidget(parent), m_proxiedManager(proxiedManager)
 {
-    m_noProxyButton = new QRadioButton("No Proxy");
-    m_socksButton = new QRadioButton("Socks5 Proxy");
-    m_httpButton = new QRadioButton("HTTP Proxy");
+    m_noProxyButton = new QRadioButton(tr("No Proxy"));
+    m_socksButton = new QRadioButton(tr("Socks5 Proxy"));
+    m_httpButton = new QRadioButton(tr("HTTP Proxy"));
 
     QButtonGroup *group = new QButtonGroup(this);
     group->addButton(m_noProxyButton);

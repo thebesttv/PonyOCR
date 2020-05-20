@@ -67,7 +67,6 @@ public:
 
     // platform is considered available if key1 is not empty
     bool platformAvailable(OCRPlatform platform);
-//    void setPlatformAvailability(OCRPlatform platform, bool checked);
 
     bool modeAvailable(OCRPlatform platform, OCRMode mode);
     void setModeAvailability(OCRPlatform platform, OCRMode mode, bool checked);
@@ -77,6 +76,9 @@ public:
 
     QString APIKey2(OCRPlatform platform);
     void setAPIKey2(OCRPlatform platform, const QString &key);
+
+    QString language() const;
+    void setLanguage(const QString &lang);
 
     void setDefault();
 
