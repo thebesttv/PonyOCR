@@ -8,7 +8,7 @@
 #include <QKeyEvent>
 
 ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *parent)
-    : QWidget(parent)
+    : QDialog(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(tr("Configuation"));
@@ -20,7 +20,7 @@ ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *paren
     // 3. add api widget to general widget
     m_generalWidget = new GeneralConfigWidget;
     m_tab->addTab(m_generalWidget, tr("General"));
-    m_proxyWidget = new ProxyConfigWidget(proxiedManager, this);
+    m_proxyWidget = new ProxyConfigWidget(proxiedManager);
     m_tab->addTab(m_proxyWidget, tr("Internet"));
 
     createBaiduWidget();
@@ -28,13 +28,11 @@ ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *paren
     createOCRSpaceWidget();
     createMathpixWidget();
 
-
     createButtonBox();
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_tab);
     mainLayout->addWidget(m_buttonBox);
-
     setLayout(mainLayout);
 }
 

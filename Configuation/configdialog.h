@@ -1,7 +1,7 @@
 #ifndef CONFIGWIDGIT_H
 #define CONFIGWIDGIT_H
 
-#include <QWidget>
+#include <QDialog>
 #include "confighandler.h"
 
 class QDialogButtonBox;
@@ -11,7 +11,7 @@ class GeneralConfigWidget;
 class ProxyConfigWidget;
 class QNetworkAccessManager;
 
-class ConfigDialog : public QWidget
+class ConfigDialog : public QDialog
 {
     Q_OBJECT
 public:
@@ -40,8 +40,5 @@ public slots:
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
-
-signals:
-
 };
 #endif // CONFIGWIDGIT_H

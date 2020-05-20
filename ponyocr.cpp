@@ -116,8 +116,7 @@ void PonyOCR::initAction()
 
     m_configAction = new QAction(tr("Settings"), this);
     connect(m_configAction, &QAction::triggered, [this] () {
-        // TODO: DEBUG
-        ConfigDialog *dialog = new ConfigDialog(m_proxiedManager, nullptr);
+        ConfigDialog *dialog = new ConfigDialog(m_proxiedManager, this);
         dialog->show();
     });
 
