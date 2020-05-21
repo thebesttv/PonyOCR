@@ -15,6 +15,7 @@
 #include <QSplitter>
 #include <QWebEngineView>
 #include <QWebChannel>
+#include <QTimer>
 
 PonyOCR::PonyOCR(QWidget *parent)
     : QMainWindow(parent)
@@ -79,6 +80,7 @@ void PonyOCR::process(OCRRequest req)
 
 void PonyOCR::onOCRSuccessful(QString s)
 {
+    show();
     if(m_outputMode == Replace) {
         m_textEdit->setPlainText(s);
     } else if(m_outputMode == Append) {
@@ -103,16 +105,8 @@ void PonyOCR::initAction()
 {
     m_OCRAction = new QAction("OCR", this);
     m_OCRAction->setToolTip(tr("Take screenshot and recognize"));
-    connect(m_OCRAction, &QAction::triggered, [this] () {
-        CaptureWidget *widget = new CaptureWidget(this);
-#ifdef Q_OS_WIN
-        widget->show();
-#else
-        widget->showFullScreen();
-#endif
-        connect(widget, &CaptureWidget::captureTaken,
-                this, &PonyOCR::process);
-    });
+    connect(m_OCRAction, &QAction::triggered,
+            this, &PonyOCR::requestOCR);
 
     m_configAction = new QAction(tr("Settings"), this);
     connect(m_configAction, &QAction::triggered, [this] () {
@@ -187,4 +181,24 @@ void PonyOCR::initMarkdownPreview()
     channel->registerObject(QStringLiteral("content"), &m_content);
     m_page->setWebChannel(channel);
     m_view->setUrl(QUrl("qrc:/Markdown/index-katex.html"));
+}
+
+void PonyOCR::requestOCR()
+{
+    setWindowOpacity(0);    // hide, but without animation
+    repaint();              // force immediate repaint to ensure that
+    // the main window is completely transparent when taking screenshot
+
+    CaptureWidget *widget = new CaptureWidget(this);
+#ifdef Q_OS_WIN
+    widget->show();
+#else
+    widget->showFullScreen();
+#endif
+    connect(widget, &CaptureWidget::captureTaken,
+            this, &PonyOCR::process);
+    connect(widget, &CaptureWidget::finished, [this](){
+        if(windowOpacity() < 1)
+            setWindowOpacity(1);    // set visible again
+    });
 }

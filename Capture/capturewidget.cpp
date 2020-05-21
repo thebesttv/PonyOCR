@@ -53,6 +53,8 @@ CaptureWidget::CaptureWidget(QWidget *parent)
 
     setMouseTracking(true);
 
+    setAttribute(Qt::WA_DeleteOnClose);
+
     new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(close()));
     connect(&m_buttonHandler, &CaptureButtonHandler::selectionDone,
             this, &CaptureWidget::pushRequest);
@@ -60,6 +62,8 @@ CaptureWidget::CaptureWidget(QWidget *parent)
 
 CaptureWidget::~CaptureWidget()
 {
+    qDebug().noquote() << "CaptureWidget deleted";
+    emit finished();
 }
 
 void CaptureWidget::mousePressEvent(QMouseEvent *event)

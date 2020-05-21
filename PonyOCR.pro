@@ -17,11 +17,15 @@ RC_ICONS = icon.ico
 # the source code of the .js files is not removed from the embedded qrc file.
 CONFIG -= qtquickcompiler
 
+#DBUS_ADAPTORS += org.thebesttv.PonyOCR.xml
+
 HEADERS += ocrrequest.h \
-           ponyocr.h
+           ponyocr.h \
+           ponyocr_adaptor.h
 
 SOURCES += main.cpp \
-           ponyocr.cpp
+           ponyocr.cpp \
+           ponyocr_adaptor.cpp
 
 include(Capture/capture.pri)
 include(API/api.pri)

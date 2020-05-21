@@ -56,6 +56,7 @@ private:
     void initMarkdownPreview();
 
 public slots:
+    void requestOCR();
     void process(OCRRequest req);
     void onOCRSuccessful(QString s);
 };

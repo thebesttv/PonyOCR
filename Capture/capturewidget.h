@@ -52,6 +52,7 @@ private:
 
 signals:
     void captureTaken(OCRRequest req);
+    void finished();
 };
 
 /*
