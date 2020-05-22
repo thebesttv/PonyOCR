@@ -293,4 +293,34 @@ Error message: %2</source>
         <translation>HTTP 代理</translation>
     </message>
 </context>
+<context>
+    <name>baidu::BaiduAPI</name>
+    <message>
+        <location filename="API/baiduapi.cpp" line="110"/>
+        <source>%1
+Detail: %2</source>
+        <translation>%1
+详情: %2</translation>
+    </message>
+</context>
+<context>
+    <name>ocrspace::OCRSpaceAPI</name>
+    <message>
+        <location filename="API/ocrspaceapi.cpp" line="96"/>
+        <source>%1
+Detail:%2</source>
+        <translation>%1
+详情: %2</translation>
+    </message>
+</context>
+<context>
+    <name>tencent::TencentAPI</name>
+    <message>
+        <location filename="API/tencentapi.cpp" line="89"/>
+        <source>%1
+Detail: %2</source>
+        <translation>%1
+详情: %2</translation>
+    </message>
+</context>
 </TS>

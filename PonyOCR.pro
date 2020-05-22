@@ -10,7 +10,7 @@ unix : !macx {  # in unix but not macOS
 }
 
 # set icon
-RC_ICONS = icon.ico
+RC_ICONS = img/icon.ico
 
 # from WebEngineWidgets/MarkdownEditor example
 # Disable Qt Quick compiler because the example doesn't use QML, but more importantly so that
@@ -20,12 +20,15 @@ CONFIG -= qtquickcompiler
 #DBUS_ADAPTORS += org.thebesttv.PonyOCR.xml
 
 HEADERS += ocrrequest.h \
-           ponyocr.h \
-           ponyocr_adaptor.h
+           ponyocr.h
 
 SOURCES += main.cpp \
-           ponyocr.cpp \
-           ponyocr_adaptor.cpp
+           ponyocr.cpp
+
+unix : !macx {
+    HEADERS += ponyocr_adaptor.h
+    SOURCES += ponyocr_adaptor.cpp
+}
 
 include(Capture/capture.pri)
 include(API/api.pri)

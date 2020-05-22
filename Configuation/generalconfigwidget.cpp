@@ -49,8 +49,8 @@ GeneralConfigWidget::GeneralConfigWidget(QWidget *parent) : QWidget(parent)
     m_clipboardCheckBox->setChecked(m_handler.copyToClipboard());
 
     m_languageCombo = new QComboBox;
-    m_languageCombo->addItem("English", "en");
-    m_languageCombo->addItem("简体中文", "zh");
+    m_languageCombo->addItem(QStringLiteral("English"), QStringLiteral("en"));
+    m_languageCombo->addItem(QStringLiteral(u"简体中文"), QStringLiteral("zh"));
     m_languageCombo->setCurrentIndex(m_handler.language() == QString("en") ? 0 : 1);
     QLabel *languageLabel = new QLabel(tr("Language (need to restart program):"));
     QFormLayout *languageLayout = new QFormLayout;

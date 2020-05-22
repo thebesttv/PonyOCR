@@ -4,15 +4,14 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QtDebug>
-
+#include <QDir>
+#include <QFile>
 #if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
 #include "ponyocr_adaptor.h"
 #include <QtDBus>
 #include <syslog.h>
 #else
 #include <QDateTime>
-#include <QDir>
-#include <QFile>
 #include <QTextStream>
 #endif
 
@@ -57,7 +56,7 @@ void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
         typeStr = "Fatal"; break;
     }
 
-    QString txt = QString("%1 %2: %3")
+    QString txt = QString("%1 %2: %3\r\n")  // windows way of line return
                   .arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss"))
                   .arg(typeStr)
                   .arg(msg);
@@ -67,14 +66,16 @@ void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
     QFile outFile(dir.absoluteFilePath("PonyLog.txt"));
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt;
     outFile.close();
 #endif
 }
 
 void fatalQuit(const char *msg) {
     qFatal("%s", msg);
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
     closelog(); // close log before exit
+#endif
     exit(1);
 }
 
@@ -97,9 +98,12 @@ int main(int argc, char *argv[])
         QApplication app(argc, argv);
         app.setWindowIcon(QIcon(":/img/icon.ico"));
 
-        QTranslator translator;
         qDebug().noquote() << "language:" << ConfigHandler().language();
-        translator.load("pony_" + ConfigHandler().language());
+        QDir dir(qApp->applicationDirPath());
+        QString prefix("pony_" + ConfigHandler().language());
+        prefix = dir.absoluteFilePath(prefix);
+        QTranslator translator;
+        translator.load(prefix);
         app.installTranslator(&translator);
 
         GlobalInitAPIResources();
@@ -108,6 +112,7 @@ int main(int argc, char *argv[])
         // wait for window to render completely
         QApplication::processEvents();
 
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
         QDBusConnection dbus = QDBusConnection::sessionBus();
         if (!dbus.isConnected()) {
             fatalQuit("Unable to connect to DBus");
@@ -121,7 +126,6 @@ int main(int argc, char *argv[])
             fatalQuit("Unable to register service, is PonyOCR alreaty running?");
         }
 
-#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
         QObject::connect(qApp, &QApplication::aboutToQuit, [](){
             closelog();
         });
