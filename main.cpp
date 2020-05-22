@@ -1,18 +1,49 @@
 #include "API/apicommon.h"
-#include "ponyocr.h"
-#include "ponyocr_adaptor.h"
 #include "Configuation/confighandler.h"
+#include "ponyocr.h"
 #include <QApplication>
+#include <QTranslator>
+#include <QtDebug>
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+#include "ponyocr_adaptor.h"
+#include <QtDBus>
+#include <syslog.h>
+#else
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
-#include <QTranslator>
-#include <QtDBus>
-#include <iostream>
+#endif
 
 void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
 {
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+    // for GNOME, use syslog
+    int errLevel;
+    switch(type) {
+//    qDebug() is used for writing custom debug output.
+//    qInfo() is used for informational messages.
+//    qWarning() is used to report warnings and *recoverable* errors in your application.
+//    qCritical() is used for writing *critical* error messages and reporting system errors.
+//    qFatal() is used for writing fatal error messages *shortly before exiting*.
+    case QtDebugMsg:
+        errLevel = LOG_DEBUG; break;
+    case QtInfoMsg:
+        errLevel = LOG_INFO; break;
+    case QtWarningMsg:
+        errLevel = LOG_WARNING; break;
+    case QtCriticalMsg:
+        errLevel = LOG_ERR; break;
+    case QtFatalMsg:
+        errLevel = LOG_CRIT; break;
+    }
+
+    syslog(errLevel, "%s", msg.toStdString().c_str());
+
+#else
+    // for windows, save log to application folder
     QString typeStr;
     switch (type) {
     case QtDebugMsg:
@@ -26,6 +57,7 @@ void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
     case QtFatalMsg:
         typeStr = "Fatal"; break;
     }
+
     QString txt = QString("%1 %2: %3")
                   .arg(QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss"))
                   .arg(typeStr)
@@ -33,16 +65,17 @@ void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
 
     // log file at application directory
     QDir dir(qApp->applicationDirPath());
-    QFile outFile(dir.absoluteFilePath("log.txt"));
+    QFile outFile(dir.absoluteFilePath("PonyLog.txt"));
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
     outFile.close();
+#endif
 }
 
-void criticalError(const QString &msg) {
-    qCritical().noquote() << msg;                   // print to log
-    std::cerr << msg.toStdString() << std::endl;    // print to screen
+void fatalQuit(const char *msg) {
+    qFatal("%s", msg);
+    closelog(); // close log before exit
     exit(1);
 }
 
@@ -50,14 +83,13 @@ const QString SERVICE_NAME("org.thebesttv.PonyOCR");
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+    // for GNOME, use (r)syslog, with facility LOCAL2
+    openlog("PonyOCR", LOG_PERROR, LOG_LOCAL2);
+#endif
     qInstallMessageHandler(msgHandler);
 
     if(argc == 1) { // start main application
-        QDBusConnection dbus = QDBusConnection::sessionBus();
-        if (!dbus.isConnected()) {
-            criticalError("Unable to connect to DBus");
-        }
-
         QCoreApplication::setOrganizationName("thebesttv");
         QCoreApplication::setApplicationName("PonyOCR");
         // High DPI support
@@ -73,25 +105,36 @@ int main(int argc, char *argv[])
         GlobalInitAPIResources();
         PonyOCR pony;
         pony.show();
-
         // wait for window to render completely
         QApplication::processEvents();
 
-        new PonyOCRAdaptor(&pony);
-        if (!dbus.registerObject("/twilight", &pony)) {
-            criticalError("Unable to register adaptor");
-        }
-        if (!dbus.registerService(SERVICE_NAME)) {
-            criticalError("Unable to register service, is PonyOCR alreaty running?");
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        if (!dbus.isConnected()) {
+            fatalQuit("Unable to connect to DBus");
         }
 
+        new PonyOCRAdaptor(&pony);
+        if (!dbus.registerObject("/twilight", &pony)) {
+            fatalQuit("Unable to register adaptor");
+        }
+        if (!dbus.registerService(SERVICE_NAME)) {
+            fatalQuit("Unable to register service, is PonyOCR alreaty running?");
+        }
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+        QObject::connect(qApp, &QApplication::aboutToQuit, [](){
+            closelog();
+        });
+#endif
         return app.exec();
     }
 
+#if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
+    // CLI processing only for Linux
     QCoreApplication app(argc, argv);
 
     if(argc > 2 || QString(argv[1]) != "request") {
-        criticalError("Usage: ponyocr [request]");
+        fatalQuit("Usage: ponyocr [request]");
     }
 
     auto iface = new QDBusInterface(SERVICE_NAME,
@@ -99,11 +142,15 @@ int main(int argc, char *argv[])
                                     "org.thebesttv.PonyOCR");
 
     if (!iface->isValid()) {
-        criticalError(qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        fatalQuit(qPrintable(QDBusConnection::sessionBus().lastError().message()));
     }
 
     iface->call("requestOCR");
 
+    QObject::connect(qApp, &QApplication::aboutToQuit, [](){
+        closelog();
+    });
     QTimer::singleShot(0, qApp, SLOT(quit()));
     return app.exec();
+#endif
 }
