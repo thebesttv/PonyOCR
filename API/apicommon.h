@@ -1,4 +1,4 @@
-#ifndef APIURL_H
+﻿#ifndef APIURL_H
 #define APIURL_H
 
 #include <QString>
