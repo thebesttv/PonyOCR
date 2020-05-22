@@ -24,7 +24,7 @@ void APIBase::getBase64Img()
 
 void APIBase::_process(const OCRRequest &request)
 {
-    qDebug().noquote() << QString("%1: process request (%2, %3)")
+    qInfo().noquote() << QString("%1: process request (%2, %3)")
                           .arg(ConfigHandler::asPlatformName(m_platform))
                           .arg(ConfigHandler::asPlatformName(request.m_platform))
                           .arg(ConfigHandler::asModeName(request.m_mode));

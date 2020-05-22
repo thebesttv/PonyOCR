@@ -26,6 +26,9 @@ public:
     CaptureWidget(QWidget *parent = nullptr);
     ~CaptureWidget();
 
+public slots:
+    void close();
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

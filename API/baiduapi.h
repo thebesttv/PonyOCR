@@ -20,7 +20,7 @@ private:
     BaiduAccessToken m_tokenGetter;
     BaiduTableProcessor m_tableProcessor;
 
-    QUrl flavoredUrl(const QString &s);
+    QUrl flavoredUrl(const QString &s, const QString &at);
 
     void processNoamrlText() override;
     void processWebImage() override;

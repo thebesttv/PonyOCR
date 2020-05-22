@@ -31,6 +31,8 @@ private:
 
 signals:
     void OCRSuccessful(QString s);
+    void OCRFailure(OCRPlatform platform, int errCode, QString errDescription);
+    void authorizationFailure(OCRPlatform platform, QString errDescription);
 };
 
 #endif // GENERALAPI_H

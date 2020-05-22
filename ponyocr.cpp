@@ -16,6 +16,7 @@
 #include <QWebEngineView>
 #include <QWebChannel>
 #include <QTimer>
+#include <QMessageBox>
 
 PonyOCR::PonyOCR(QWidget *parent)
     : QMainWindow(parent)
@@ -39,6 +40,10 @@ PonyOCR::PonyOCR(QWidget *parent)
 
     connect(&m_api, &GeneralAPI::OCRSuccessful,
             this, &PonyOCR::onOCRSuccessful);
+    connect(&m_api, &GeneralAPI::OCRFailure,
+            this, &PonyOCR::onOCRFailure);
+    connect(&m_api, &GeneralAPI::authorizationFailure,
+            this, &PonyOCR::onAuthorizationFailure);
 
     m_textEdit = new QPlainTextEdit();
     m_textEdit->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
@@ -80,7 +85,6 @@ void PonyOCR::process(OCRRequest req)
 
 void PonyOCR::onOCRSuccessful(QString s)
 {
-    show();
     if(m_outputMode == Replace) {
         m_textEdit->setPlainText(s);
     } else if(m_outputMode == Append) {
@@ -92,6 +96,34 @@ void PonyOCR::onOCRSuccessful(QString s)
 
     if(m_handler.copyToClipboard())
         qApp->clipboard()->setText(s);
+}
+
+void PonyOCR::onOCRFailure(OCRPlatform platform, int errCode, QString errMsg)
+{
+    // use singleShot to prevent modal MessageBox appearing too early
+    QTimer::singleShot(0, this, [this, platform, errCode, errMsg](){
+        QMessageBox::critical(this, tr("OCR Failed"),
+                              tr("Platform: %1\nError code: %2\nError message: %3")
+                              .arg(ConfigHandler::asPlatformName(platform))
+                              .arg(errCode).arg(errMsg));
+    });
+    qCritical().noquote() << QString("%1: OCR failed, error code: %2, error message: %3")
+                             .arg(ConfigHandler::asPlatformName(platform))
+                             .arg(errCode).arg(errMsg);
+}
+
+void PonyOCR::onAuthorizationFailure(OCRPlatform platform, QString errMsg)
+{
+    // use singleShot to prevent modal MessageBox appearing too early
+    QTimer::singleShot(0, this, [this, platform, errMsg](){
+        QMessageBox::critical(this, tr("Authorization Failed"),
+                              tr("Platform: %1\nError message: %2")
+                              .arg(ConfigHandler::asPlatformName(platform))
+                              .arg(errMsg));
+    });
+    qCritical().noquote() << QString("%1: authorization failed, error message: %2")
+                             .arg(ConfigHandler::asPlatformName(platform))
+                             .arg(errMsg);
 }
 
 void PonyOCR::about()
@@ -198,7 +230,6 @@ void PonyOCR::requestOCR()
     connect(widget, &CaptureWidget::captureTaken,
             this, &PonyOCR::process);
     connect(widget, &CaptureWidget::finished, [this](){
-        if(windowOpacity() < 1)
-            setWindowOpacity(1);    // set visible again
+        setWindowOpacity(1);    // set visible again
     });
 }

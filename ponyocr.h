@@ -59,6 +59,8 @@ public slots:
     void requestOCR();
     void process(OCRRequest req);
     void onOCRSuccessful(QString s);
+    void onOCRFailure(OCRPlatform platform, int errCode, QString errDescription);
+    void onAuthorizationFailure(OCRPlatform platform, QString errDescription);
 };
 
 #endif // FUNOCR_H

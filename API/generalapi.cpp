@@ -13,15 +13,31 @@ GeneralAPI::GeneralAPI(QNetworkAccessManager *normalManager,
 {
     connect(&baiduAPI, &baidu::BaiduAPI::OCRSuccessful,
             this, &GeneralAPI::OCRSuccessful);
+    connect(&baiduAPI, &baidu::BaiduAPI::OCRFailure,
+            this, &GeneralAPI::OCRFailure);
+    connect(&baiduAPI, &baidu::BaiduAPI::authorizationFailure,
+            this, &GeneralAPI::authorizationFailure);
 
     connect(&tencentAPI, &tencent::TencentAPI::OCRSuccessful,
             this, &GeneralAPI::OCRSuccessful);
+    connect(&tencentAPI, &tencent::TencentAPI::OCRFailure,
+            this, &GeneralAPI::OCRFailure);
+    connect(&tencentAPI, &tencent::TencentAPI::authorizationFailure,
+            this, &GeneralAPI::authorizationFailure);
 
     connect(&ocrspaceAPI, &ocrspace::OCRSpaceAPI::OCRSuccessful,
             this, &GeneralAPI::OCRSuccessful);
+    connect(&ocrspaceAPI, &ocrspace::OCRSpaceAPI::OCRFailure,
+            this, &GeneralAPI::OCRFailure);
+    connect(&ocrspaceAPI, &ocrspace::OCRSpaceAPI::authorizationFailure,
+            this, &GeneralAPI::authorizationFailure);
 
     connect(&mathpixAPI, &mathpix::MathpixAPI::OCRSuccessful,
             this, &GeneralAPI::OCRSuccessful);
+    connect(&mathpixAPI, &mathpix::MathpixAPI::OCRFailure,
+            this, &GeneralAPI::OCRFailure);
+    connect(&mathpixAPI, &mathpix::MathpixAPI::authorizationFailure,
+            this, &GeneralAPI::authorizationFailure);
 }
 
 void GeneralAPI::process(const OCRRequest &req)

@@ -43,8 +43,9 @@ void MathpixAPI::processFormula()
 void MathpixAPI::parse()
 {
     m_reply->deleteLater();
+    qInfo().noquote() << QString("%1: request finished, start parsing")
+                         .arg(ConfigHandler::asPlatformName(m_platform));
 
-    qDebug().noquote() << "Mathpix: request finished, start parsing";
     QJsonObject obj = QJsonDocument::fromJson(m_array).object();
     QString res = obj["text"].toString();
 
@@ -54,7 +55,7 @@ void MathpixAPI::parse()
     // match 2 backslash followed by a letter
     res.replace(rx, "\\\\2");
 
-    qDebug().noquote() << "parse successful";
+    qInfo().noquote() << "parse successful";
     emit OCRSuccessful(res);
 }
 

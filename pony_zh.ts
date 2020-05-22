@@ -4,12 +4,12 @@
 <context>
     <name>APIConfigWidget</name>
     <message>
-        <location filename="Configuation/apiconfigwidget.cpp" line="28"/>
+        <location filename="Configuation/apiconfigwidget.cpp" line="27"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="Configuation/apiconfigwidget.cpp" line="32"/>
+        <location filename="Configuation/apiconfigwidget.cpp" line="31"/>
         <source>Use Proxy</source>
         <translation>使用代理</translation>
     </message>
@@ -17,7 +17,7 @@
 <context>
     <name>CaptureWidget</name>
     <message>
-        <location filename="Capture/capturewidget.cpp" line="255"/>
+        <location filename="Capture/capturewidget.cpp" line="263"/>
         <source>Swipe along the main diagonal for quick OCR
 Along the antidiagonal for detailed options
 Note that picture should not be too small</source>
@@ -27,7 +27,7 @@ Note that picture should not be too small</source>
 注意：截图不能太小</translation>
     </message>
     <message>
-        <location filename="Capture/capturewidget.cpp" line="263"/>
+        <location filename="Capture/capturewidget.cpp" line="271"/>
         <source>Picture size too small!</source>
         <translation>截图太小！</translation>
     </message>
@@ -45,19 +45,19 @@ Note that picture should not be too small</source>
         <translation>一般</translation>
     </message>
     <message>
-        <location filename="Configuation/configdialog.cpp" line="24"/>
+        <location filename="Configuation/configdialog.cpp" line="25"/>
         <source>Internet</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location filename="Configuation/configdialog.cpp" line="54"/>
+        <location filename="Configuation/configdialog.cpp" line="55"/>
         <source>API is considered unavailable if the first key is left empty.
 Table recognition result will output as markdown table format,you can copy the html format table from markdown preview.</source>
         <translation>如果第一行为空，则表示此平台不可用。
 表格会以 Markdown 格式输出，可以从右侧预览窗口复制 Html 格式的表格。</translation>
     </message>
     <message>
-        <location filename="Configuation/configdialog.cpp" line="86"/>
+        <location filename="Configuation/configdialog.cpp" line="87"/>
         <source>API is considered unavailable if the first key is left empty.
 The table mode of this API will not output an actual table, it will only better organise structured text (table, receipt, etc).
 Note that this platform will have a delay of 2-3s, and sometimes it&apos;s not very stable.</source>
@@ -78,8 +78,8 @@ you can copy the html format table from markdown preview.</source>
 表格会以 Markdown 格式输出，但可以从右侧预览窗口复制 Html 格式的表格。</translation>
     </message>
     <message>
-        <location filename="Configuation/configdialog.cpp" line="74"/>
-        <location filename="Configuation/configdialog.cpp" line="102"/>
+        <location filename="Configuation/configdialog.cpp" line="75"/>
+        <location filename="Configuation/configdialog.cpp" line="103"/>
         <source>API is considered unavailable if the first key is left empty.</source>
         <translation>如果第一行为空，则表示此平台不可用。</translation>
     </message>
@@ -210,41 +210,67 @@ and sometimes it&apos;s not very stable</source>
     <name>PonyOCR</name>
     <message>
         <location filename="ponyocr.cpp" line="105"/>
+        <source>OCR Failed</source>
+        <translation>识别失败</translation>
+    </message>
+    <message>
+        <location filename="ponyocr.cpp" line="106"/>
+        <source>Platform: %1
+Error code: %2
+Error message: %3</source>
+        <translation>平台：%1
+错误码：%2
+错误信息：%3</translation>
+    </message>
+    <message>
+        <location filename="ponyocr.cpp" line="119"/>
+        <source>Authorization Failed</source>
+        <translation>鉴权失败</translation>
+    </message>
+    <message>
+        <location filename="ponyocr.cpp" line="120"/>
+        <source>Platform: %1
+Error message: %2</source>
+        <translation>平台：%1
+错误信息：%2</translation>
+    </message>
+    <message>
+        <location filename="ponyocr.cpp" line="139"/>
         <source>Take screenshot and recognize</source>
         <translation>截图并识别</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="117"/>
+        <location filename="ponyocr.cpp" line="143"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="125"/>
+        <location filename="ponyocr.cpp" line="151"/>
         <source>Replace current text</source>
         <translation>覆盖全文</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="129"/>
+        <location filename="ponyocr.cpp" line="155"/>
         <source>Append to text</source>
         <translation>追加至文末</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="133"/>
+        <location filename="ponyocr.cpp" line="159"/>
         <source>Insert at cursor</source>
         <translation>插入于光标</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="147"/>
+        <location filename="ponyocr.cpp" line="173"/>
         <source>Select insert mode</source>
         <translation>选择插入模式</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="153"/>
+        <location filename="ponyocr.cpp" line="179"/>
         <source>Show markdown preview</source>
         <translation>显示 Markdown 预览</translation>
     </message>
     <message>
-        <location filename="ponyocr.cpp" line="165"/>
+        <location filename="ponyocr.cpp" line="191"/>
         <source>MainToolBar</source>
         <translation>工具栏</translation>
     </message>

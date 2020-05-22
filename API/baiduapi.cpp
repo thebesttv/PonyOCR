@@ -29,10 +29,10 @@ BaiduAPI::BaiduAPI(QNetworkAccessManager *normalManager,
             this, &BaiduAPI::OCRFailure);
 }
 
-QUrl BaiduAPI::flavoredUrl(const QString &s)
+QUrl BaiduAPI::flavoredUrl(const QString &s, const QString &at)
 {
     QUrl url(s); QUrlQuery query;
-    query.addQueryItem("access_token", m_tokenGetter.getAccessToken());
+    query.addQueryItem("access_token", at);
     url.setQuery(query);
     return url;
 }
@@ -49,9 +49,12 @@ void BaiduAPI::processWebImage()
 
 void BaiduAPI::processTable()
 {
+    QString token = m_tokenGetter.getAccessToken();
+    if(token.isEmpty())
+        return;
     m_tableProcessor.process(m_base64str,
-                             flavoredUrl(TABLE_REQUEST),
-                             flavoredUrl(TABLE_RESULT));
+                             flavoredUrl(TABLE_REQUEST, token),
+                             flavoredUrl(TABLE_RESULT, token));
 }
 
 void BaiduAPI::processQRCode()
@@ -76,7 +79,11 @@ void BaiduAPI::processFormula()
 
 void BaiduAPI::processBase(QString url)
 {
-    QNetworkRequest request(flavoredUrl(url));
+    QString token = m_tokenGetter.getAccessToken();
+    if(token.isEmpty())
+        return;
+
+    QNetworkRequest request(flavoredUrl(url, token));
     setHeader(request);
 
     QUrlQuery query;
@@ -94,16 +101,16 @@ void BaiduAPI::processBase(QString url)
 void BaiduAPI::parse()
 {
     m_reply->deleteLater();
+    qInfo().noquote() << QString("%1: request finished, start parsing")
+                         .arg(ConfigHandler::asPlatformName(m_platform));
 
-    qDebug().noquote() << "Baidu: request finished, start parsing";
     QJsonObject obj = QJsonDocument::fromJson(m_array).object();
     if(obj.contains("error_code")){
         int errCode = obj["error_code"].toInt();
-        QString errMsg =  QString("Message: %1\nDetail: %2")
-                        .arg(obj["error_msg"].toString())
-                        .arg(ErrorCodeMap[errCode]);
-        qWarning().noquote() << QString("parse failed with error code: %1\n%2")
-                                .arg(errCode).arg(errMsg);
+        QString errMsg =  tr("%1\nDetail: %2")
+                          .arg(obj["error_msg"].toString())
+                          .arg(ErrorCodeMap[errCode]);
+        qCritical().noquote() << QString("parse failed");
         emit OCRFailure(OCRPlatform::Baidu, errCode, errMsg);
         return;
     }
@@ -123,7 +130,7 @@ void BaiduAPI::parse()
         }
     }
 
-    qDebug().noquote() << "parse successful";
+    qInfo().noquote() << "parse successful";
     emit OCRSuccessful(result);
 }
 

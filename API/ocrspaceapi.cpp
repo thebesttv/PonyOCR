@@ -62,16 +62,19 @@ void OCRSpaceAPI::processTable()
 void OCRSpaceAPI::parse()
 {
     m_reply->deleteLater();
+    qInfo().noquote() << QString("%1: request finished, start parsing")
+                         .arg(ConfigHandler::asPlatformName(m_platform));
 
-    qDebug().noquote() << "OCR.Space: request finished, start parsing";
     QJsonObject obj(QJsonDocument::fromJson(m_array).object());
 
     int exitCode = obj["OCRExitCode"].toInt();
     if(exitCode != 1) {
         emit OCRFailure(OCRPlatform::OCR_Space, exitCode, ErrorCodeMap[exitCode]);
-        qWarning().noquote() << QString("parse failed with exit code: %1")
-                                .arg(exitCode);
-        if(exitCode != 2) return;
+        if(exitCode > 2) {
+            qCritical().noquote() << "parse failed completely";
+            return;
+        } else
+            qWarning().noquote() << "only parsed partially";
     }
 
     QJsonArray array = obj["ParsedResults"].toArray();
@@ -81,7 +84,7 @@ void OCRSpaceAPI::parse()
         res += parseSingleResult(p.toObject());
     }
 
-    qDebug().noquote() << "parse successful";
+    qInfo().noquote() << "parse successful";
     emit OCRSuccessful(res);
 }
 
@@ -90,11 +93,10 @@ QString OCRSpaceAPI::parseSingleResult(const QJsonObject &source)
     QJsonObject obj = source;
     int exitCode = obj["FileParseExitCode"].toInt();
     if(exitCode != 1) {
-        QString errMsg =  QString("Message: %1\nDetail:%2")
-                          .arg(obj["ErrorMessage"].toString())
-                          .arg(obj["ErrorDetails"].toString());
-        qWarning().noquote() << QString("parse failed with exit code: %1\n%2")
-                                .arg(exitCode).arg(errMsg);
+        QString errMsg = tr("%1\nDetail:%2")
+                         .arg(obj["ErrorMessage"].toString())
+                         .arg(obj["ErrorDetails"].toString());
+        qCritical().noquote() << QString("parse failed");
         emit OCRFailure(OCRPlatform::OCR_Space, exitCode, errMsg);
         return "";
     }

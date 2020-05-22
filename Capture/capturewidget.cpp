@@ -62,8 +62,12 @@ CaptureWidget::CaptureWidget(QWidget *parent)
 
 CaptureWidget::~CaptureWidget()
 {
-    qDebug().noquote() << "CaptureWidget deleted";
+}
+
+void CaptureWidget::close()
+{
     emit finished();
+    QWidget::close();
 }
 
 void CaptureWidget::mousePressEvent(QMouseEvent *event)

@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
         app.setWindowIcon(QIcon(":/img/icon.ico"));
 
         QTranslator translator;
+        qDebug().noquote() << "language:" << ConfigHandler().language();
         translator.load("pony_" + ConfigHandler().language());
         app.installTranslator(&translator);
 

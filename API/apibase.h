@@ -33,8 +33,8 @@ protected:
 
 signals:
     void OCRSuccessful(QString res);
-    void OCRFailure(OCRPlatform platform, int errCode, QString errDescription);
-    void authorizationFailure(OCRPlatform platform, QString errDescription);
+    void OCRFailure(OCRPlatform platform, int errCode, QString errMsg);
+    void authorizationFailure(OCRPlatform platform, QString errMsg);
 };
 
 #endif // APIBASE_H

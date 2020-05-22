@@ -59,7 +59,7 @@ void TencentAPI::processBase(QString url)
     // generate 32 byte random string from random uuid
     QString randomStr(QUuid::createUuid().toString());
     randomStr.remove(QRegularExpression("{|}|-"));
-//    qDebug().noquote() << "TencentAPI: generate random string as nonce_str: " << randomStr;
+    qDebug().noquote() << "TencentAPI: generate random string as nonce_str: " << randomStr;
 
     QUrlQuery query;
     query.addQueryItem("app_id", m_AppID);
@@ -80,16 +80,16 @@ void TencentAPI::processBase(QString url)
 void TencentAPI::parse()
 {
     m_reply->deleteLater();
+    qInfo().noquote() << QString("%1: request finished, start parsing")
+                         .arg(ConfigHandler::asPlatformName(m_platform));
 
-    qDebug().noquote() << "Tencent: request finished, start parsing";
     QJsonObject obj = QJsonDocument::fromJson(m_array).object();
     int errCode = obj["ret"].toInt();
     if(errCode != 0) {  // error
-        QString errMsg = QString("Message: %1\nDetail: %2")
+        QString errMsg =  tr("%1\nDetail: %2")
                          .arg(obj["msg"].toString())
                          .arg(ErrorCodeMap[errCode]);
-        qWarning().noquote() << QString("parse failed with error code: %1\n%2")
-                                .arg(errCode).arg(errMsg);
+        qCritical().noquote() << QString("parse failed");
         emit OCRFailure(OCRPlatform::Tencent, errCode, errMsg);
         return;
     }
@@ -100,7 +100,7 @@ void TencentAPI::parse()
         result += x.toObject()["itemstring"].toString() + "\n";
     }
 
-    qDebug().noquote() << "parse successful";
+    qInfo().noquote() << "parse successful";
     emit OCRSuccessful(result);
 }
 
