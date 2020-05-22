@@ -1,4 +1,4 @@
-#include "apicommon.h"
+﻿#include "apicommon.h"
 
 QMap<int, QString> baidu::ErrorCodeMap;
 QMap<int, QString> tencent::ErrorCodeMap;

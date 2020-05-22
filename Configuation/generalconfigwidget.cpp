@@ -1,4 +1,4 @@
-#include "generalconfigwidget.h"
+﻿#include "generalconfigwidget.h"
 #include "configdialog.h"
 #include "apiconfigwidget.h"
 #include <QLabel>
