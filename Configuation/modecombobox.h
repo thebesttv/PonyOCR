@@ -18,12 +18,6 @@ public:
 private:
     QLabel *m_label;
     OCRMode m_mode;
-
-private slots:
-    void platformChanged();
-
-signals:
-    void setDefaultPlatform(OCRMode mode, OCRPlatform platform);
 };
 
 #endif // MODECOMBOBOX_H

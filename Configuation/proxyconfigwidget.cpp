@@ -79,7 +79,5 @@ void ProxyConfigWidget::saveConfig()
         proxy.setHostName(m_handler.proxyHost(proxy.type()));
         proxy.setPort(m_handler.proxyPort(proxy.type()));
     }
-    qDebug() << "here" << m_proxiedManager;
     m_proxiedManager->setProxy(proxy);
-    qDebug() << "done";
 }

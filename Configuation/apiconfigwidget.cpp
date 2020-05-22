@@ -13,7 +13,6 @@ APIConfigWidget::APIConfigWidget(OCRPlatform platform,
     : QWidget(parent), m_platform(platform)
     , m_checkBoxes(EndOfMode), m_boxCnt(0)
 {
-
     QFormLayout *keyLayout = new QFormLayout;
     m_label1 = new QLabel(kay1name);
     m_lineEdit1 = new QLineEdit(m_handler.APIKey1(m_platform));

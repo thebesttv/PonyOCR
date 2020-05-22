@@ -5,8 +5,6 @@ ModeComboBox::ModeComboBox(OCRMode mode, QWidget *parent)
     : QComboBox(parent), m_mode(mode)
 {
     m_label = new QLabel(ConfigHandler::asModeName(mode));
-    connect(this, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(platformChanged(int)));
 }
 
 QLabel *ModeComboBox::label()
@@ -24,9 +22,4 @@ void ModeComboBox::show()
 {
     m_label->show();
     QComboBox::show();
-}
-
-void ModeComboBox::platformChanged()
-{
-    emit setDefaultPlatform(m_mode, static_cast<OCRPlatform>(currentData().toInt()));
 }

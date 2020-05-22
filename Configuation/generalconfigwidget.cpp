@@ -94,9 +94,6 @@ void GeneralConfigWidget::saveConfig()
         OCRPlatform platform = static_cast<OCRPlatform>(
                     modeList[m]->currentData().toInt());
         handler.setDefaultPlatform(mode, platform);
-//        qDebug().noquote() << QString("save default for mode %1: %2")
-//                              .arg(ConfigHandler::asModeName(mode))
-//                              .arg(ConfigHandler::asPlatformName(platform));
     }
 
     handler.setLanguage(languageCombo->currentData().toString());
