@@ -20,6 +20,7 @@ ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *paren
     // 3. add api widget to general widget
     m_generalWidget = new GeneralConfigWidget;
     m_tab->addTab(m_generalWidget, tr("General"));
+
     m_proxyWidget = new ProxyConfigWidget(proxiedManager);
     m_tab->addTab(m_proxyWidget, tr("Internet"));
 
@@ -40,7 +41,7 @@ ConfigDialog::ConfigDialog(QNetworkAccessManager *proxiedManager, QWidget *paren
 void ConfigDialog::createButtonBox()
 {
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Save
-                                   | QDialogButtonBox::Cancel);
+                                     | QDialogButtonBox::Cancel);
     connect(m_buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked,
             this, &ConfigDialog::saveConfig);
     connect(m_buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked,

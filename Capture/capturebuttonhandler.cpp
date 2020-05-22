@@ -42,7 +42,7 @@ CaptureButtonHandler::CaptureButtonHandler(QWidget *parent)
 void CaptureButtonHandler::setScreenRegions(const QVector<QRect> &v)
 {
     m_regions = v;
-    qDebug().noquote() << "screens: " << v;
+    qDebug().noquote() << "screens:" << v;
 }
 
 void CaptureButtonHandler::hideAll()

@@ -21,23 +21,24 @@ public:
     void addAPI(APIConfigWidget *widget);
 
 private:
-    ConfigHandler handler;
-    QList<APIConfigWidget*> apiList;
-    QList<ModeComboBox*> modeList;
-    QVector<QList<int>> modePlatforms;
-    QFormLayout *comboLayout;
+    ConfigHandler m_handler;
 
-    QColor uiColor;
-    QLabel *colorLabel;
-    QPushButton *colorPushButton;
+    QColor m_uiColor;
+    QLabel *m_colorLabel;
+    QPushButton *m_colorPushButton;
 
-    QLabel *opacityLabel;
-    QSpinBox *opacitySpinBox;
-    QSlider *opacitySlider;
+    QLabel *m_opacityLabel;
+    QSpinBox *m_opacitySpinBox;
+    QSlider *m_opacitySlider;
 
-    QCheckBox *clipboardCheckBox;
+    QCheckBox *m_clipboardCheckBox;
 
-    QComboBox *languageCombo;
+    QComboBox *m_languageCombo;
+
+    QList<APIConfigWidget*> m_apiList;
+    QList<ModeComboBox*> m_modeList;
+    QVector<QList<int>> m_modePlatforms;
+    QFormLayout *m_comboLayout;
 
     void setColor();
     void updateComboBox();

@@ -18,7 +18,6 @@
 
 void msgHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
 {
-
 #if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
     // for GNOME, use syslog
     int errLevel;
