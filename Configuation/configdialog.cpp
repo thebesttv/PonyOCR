@@ -42,6 +42,8 @@ void ConfigDialog::createButtonBox()
 {
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Save
                                      | QDialogButtonBox::Cancel);
+    m_buttonBox->button(QDialogButtonBox::Save)->setText(tr("Save"));
+    m_buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
     connect(m_buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked,
             this, &ConfigDialog::saveConfig);
     connect(m_buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked,

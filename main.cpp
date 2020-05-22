@@ -98,12 +98,10 @@ int main(int argc, char *argv[])
         QApplication app(argc, argv);
         app.setWindowIcon(QIcon(":/img/icon.ico"));
 
-        qDebug().noquote() << "language:" << ConfigHandler().language();
-        QDir dir(qApp->applicationDirPath());
-        QString prefix("pony_" + ConfigHandler().language());
-        prefix = dir.absoluteFilePath(prefix);
+        QString language = ConfigHandler().language();
+        qDebug().noquote() << "language:" << language;
         QTranslator translator;
-        translator.load(prefix);
+        translator.load("pony_" + language, qApp->applicationDirPath());
         app.installTranslator(&translator);
 
         GlobalInitAPIResources();
