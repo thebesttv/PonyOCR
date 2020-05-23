@@ -303,7 +303,12 @@ void CaptureWidget::renderMenu(QPainter &painter, const QString &text)
 
 void CaptureWidget::pushRequest(OCRPlatform platform, OCRMode mode)
 {
-    OCRRequest req(mode, platform, m_img.copy(m_selectionWidget.geometry()));
+    // rect: unsacled geometry
+    QRect rect = m_selectionWidget.geometry();
+    qreal dpr = m_img.devicePixelRatioF();
+    rect = QRect(rect.x() * dpr, rect.y() * dpr,
+                 rect.width() * dpr, rect.height() * dpr);
+    OCRRequest req(mode, platform, m_img.copy(rect));
     qDebug().noquote() << QString("push request (%1, %2)")
                           .arg(ConfigHandler::asPlatformName(platform))
                           .arg(ConfigHandler::asModeName(mode));
