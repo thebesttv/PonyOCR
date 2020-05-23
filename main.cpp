@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         QCoreApplication::setOrganizationName("thebesttv");
         QCoreApplication::setApplicationName("PonyOCR");
         // High DPI support
-        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
         QApplication app(argc, argv);
         app.setWindowIcon(QIcon(":/img/icon.ico"));
