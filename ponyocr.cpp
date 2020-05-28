@@ -85,6 +85,8 @@ void PonyOCR::process(OCRRequest req)
 
 void PonyOCR::onOCRSuccessful(QString s)
 {
+    activateWindow();
+    raise();
     s = s.trimmed();
     if(m_outputMode == Replace) {
         m_textEdit->setPlainText(s);

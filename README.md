@@ -4,10 +4,6 @@
 
 A simple tool for fetching OCR results from Baidu, Tencent, Mathpix, etc.
 
-Trying to support Linux (with Gnome desktop) and Win10.
-
-(Too) Much is left to be done...
-
 ## Supported OCR Mode:
 * Normal Text
 * Table
