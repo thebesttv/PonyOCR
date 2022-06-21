@@ -9,8 +9,8 @@ A simple tool for fetching OCR results from Baidu, Tencent, Mathpix, etc.
 * Table
   |name|price|
   |----|-----|
-  |apple| $10|
-  |pony | $\infty$|
+  |apple| $10$ |
+  |pony | $\infty$ |
 * Mathematical Formula (KaTeX)
   \\[ f(pony) = \int_{-\infty}^{\infty} \text{doubly fun}\\]
 * Handwriting
