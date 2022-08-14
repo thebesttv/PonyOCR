@@ -1,0 +1,10 @@
+# ~/.local/share/applications/PonyOCR.desktop
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=PonyOCR
+Comment=OCR with ease
+Exec=/home/thebesttv/bin/PonyOCR
+Icon=/usr/share/icons/hicolor/48x48/apps/ponyocr.png
+Terminal=false
+Categories=Utility
